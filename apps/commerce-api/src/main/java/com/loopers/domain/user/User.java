@@ -42,7 +42,7 @@ public class User extends BaseEntity {
     ) {
         Assert.hasText(userId, "아이디는 비어있을 수 없습니다.");
         Assert.hasText(email, "이메일은 비어있을 수 없습니다.");
-        Assert.notNull(birthDate, "생년월일은 비어잇을 수 없습니다.");
+        Assert.notNull(birthDate, "생년월일은 비어있을 수 없습니다.");
         Assert.isTrue(email.contains("@"), "유효하지 않은 이메일 형식 입니다.");
         Assert.isTrue(birthDate.isBefore(LocalDate.now()), "생년월일은 현재보다 이전이어야 합니다.");
     }
