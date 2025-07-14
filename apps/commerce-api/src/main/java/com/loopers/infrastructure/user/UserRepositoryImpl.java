@@ -14,4 +14,14 @@ public class UserRepositoryImpl implements UserRepository {
     public User save(User user) {
         return this.userJpaRepository.save(user);
     }
+
+    @Override
+    public boolean existsByUserId(String userId) {
+        return this.userJpaRepository.existsByUserId(userId);
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return this.userJpaRepository.existsByEmail(email);
+    }
 }
