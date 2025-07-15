@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.loopers.application.user.UserCommand.UserCreateCommand;
+import com.loopers.interfaces.api.user.UserDto.UserCreateRequest;
 import com.loopers.support.error.CoreException;
 import com.loopers.support.error.ErrorType;
 import java.time.LocalDate;
@@ -31,6 +32,12 @@ class UserTest {
             gender = Gender.MALE;
             birthDate = LocalDate.now().minusDays(1);
         }
+
+        /*
+        * - [x]  ID 가 `영문 및 숫자 10자 이내` 형식에 맞지 않으면, User 객체 생성에 실패한다.
+        * - [x]  이메일이 `xx@yy.zz` 형식에 맞지 않으면, User 객체 생성에 실패한다.
+        * - [x]  생년월일이 `yyyy-MM-dd` 형식에 맞지 않으면, User 객체 생성에 실패한다.
+        */
 
         @DisplayName("모든 값이 주어지면 정상적인 유저가 생성된다.")
         @Test
@@ -88,14 +95,11 @@ class UserTest {
         @DisplayName("생년월일 형식이 yyyy-MM-dd가 아니면, User 객체 생성에 실패한다.")
         @Test
         void createUserWithInvalidBirthDate() {
-            String invalidBirthDateString = "01/08/1998";
-            DateTimeFormatter invalidBirthDateFormatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
-            LocalDate invalidBirthDate = LocalDate.parse(invalidBirthDateString, invalidBirthDateFormatter);
-            System.out.println("invalidBirthDate = " + invalidBirthDate);
-            UserCreateCommand command = new UserCreateCommand(
+            String invalidBirthDate = "08/01/1998";
+            UserCreateRequest dto = new UserCreateRequest(
                     userId, email, gender, invalidBirthDate
             );
-            CoreException coreException = assertThrows(CoreException.class, () -> User.create(command));
+            CoreException coreException = assertThrows(CoreException.class, dto::toCommand);
             assertThat(coreException.getErrorType()).isEqualTo(ErrorType.BAD_REQUEST);
         }
     }
