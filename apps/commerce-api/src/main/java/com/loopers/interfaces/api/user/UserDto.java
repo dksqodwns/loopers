@@ -39,7 +39,6 @@ public class UserDto {
             String birthDate
     ) {
         public UserCreateCommand toCommand() {
-            // 여기서 birthDate을 LocalDate타입으로 바꿈
             LocalDate parsedBirthDate;
 
             try {
