@@ -27,6 +27,9 @@ public class UserDto {
             @NotEmpty(message = "ID는 비어있을 수 없습니다.")
             String userId,
 
+            @NotEmpty(message = "유저 이름은 비어있을 수 없습니다.")
+            String username,
+
             @NotEmpty(message = "이메일은 비어있을 수 없습니다.")
             @Email(message = "유효한 이메일 형식이 아닙니다.")
             String email,
@@ -49,6 +52,7 @@ public class UserDto {
 
             return new UserCreateCommand(
                     this.userId,
+                    this.username,
                     this.email,
                     this.gender,
                     parsedBirthDate
