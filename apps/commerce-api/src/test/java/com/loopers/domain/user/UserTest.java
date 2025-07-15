@@ -21,6 +21,7 @@ class UserTest {
     @Nested
     class Create {
         String userId;
+        String username;
         String email;
         Gender gender;
         LocalDate birthDate;
@@ -28,27 +29,27 @@ class UserTest {
         @BeforeEach
         void init() {
             userId = "test";
+            username = "테스터";
             email = "test@test.com";
             gender = Gender.MALE;
             birthDate = LocalDate.now().minusDays(1);
         }
 
-        /*
-        * - [x]  ID 가 `영문 및 숫자 10자 이내` 형식에 맞지 않으면, User 객체 생성에 실패한다.
-        * - [x]  이메일이 `xx@yy.zz` 형식에 맞지 않으면, User 객체 생성에 실패한다.
-        * - [x]  생년월일이 `yyyy-MM-dd` 형식에 맞지 않으면, User 객체 생성에 실패한다.
-        */
-
         @DisplayName("모든 값이 주어지면 정상적인 유저가 생성된다.")
         @Test
         void createUser() {
             UserCreateCommand command = new UserCreateCommand(
-                    userId, email, gender, birthDate
+                    userId,
+                    username,
+                    email,
+                    gender,
+                    birthDate
             );
             User user = User.create(command);
 
             assertAll(
                     () -> assertThat(user.getId()).isNotNull(),
+                    () -> assertThat(user.getUsername()).isEqualTo(username),
                     () -> assertThat(user.getUserId()).isEqualTo(userId),
                     () -> assertThat(user.getEmail()).isEqualTo(email),
                     () -> assertThat(user.getGender()).isEqualTo(gender),
@@ -63,7 +64,7 @@ class UserTest {
         void createUserWithEmptyId() {
             String empty = " ";
             UserCreateCommand command = new UserCreateCommand(
-                    empty, email, gender, birthDate
+                    empty, username, email, gender, birthDate
             );
             CoreException coreException = assertThrows(CoreException.class, () -> User.create(command));
             assertThat(coreException.getErrorType()).isEqualTo(ErrorType.BAD_REQUEST);
@@ -74,7 +75,7 @@ class UserTest {
         void createUserWithInvalidId() {
             String invalidUserId = "something-wrong-user-id";
             UserCreateCommand command = new UserCreateCommand(
-                    invalidUserId, email, gender, birthDate
+                    invalidUserId, username, email, gender, birthDate
             );
             CoreException coreException = assertThrows(CoreException.class, () -> User.create(command));
             assertThat(coreException.getErrorType()).isEqualTo(ErrorType.BAD_REQUEST);
@@ -85,7 +86,7 @@ class UserTest {
         void createUserWithInvalidEmail() {
             String invalidEmail = "something-wrong-email";
             UserCreateCommand command = new UserCreateCommand(
-                    userId, invalidEmail, gender, birthDate
+                    userId, username, invalidEmail, gender, birthDate
             );
 
             CoreException coreException = assertThrows(CoreException.class, () -> User.create(command));
@@ -97,7 +98,7 @@ class UserTest {
         void createUserWithInvalidBirthDate() {
             String invalidBirthDate = "08/01/1998";
             UserCreateRequest dto = new UserCreateRequest(
-                    userId, email, gender, invalidBirthDate
+                    userId, username, email, gender, invalidBirthDate
             );
             CoreException coreException = assertThrows(CoreException.class, dto::toCommand);
             assertThat(coreException.getErrorType()).isEqualTo(ErrorType.BAD_REQUEST);
