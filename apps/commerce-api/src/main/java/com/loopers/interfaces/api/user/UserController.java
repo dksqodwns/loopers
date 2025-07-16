@@ -6,8 +6,10 @@ import static com.loopers.interfaces.api.user.UserDto.UserResponse;
 import com.loopers.application.user.UserFacade;
 import com.loopers.application.user.UserInfo;
 import com.loopers.interfaces.api.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +26,15 @@ public class UserController {
         UserInfo userInfo = this.userFacade.createUser(request.toCommand());
         UserResponse response = UserResponse.from(userInfo);
 
+        return ApiResponse.success(response);
+    }
+
+    @GetMapping("/me")
+    public ApiResponse<UserResponse> getUser(HttpServletRequest request) {
+        String userId = request.getHeader("X-USER-ID");
+
+        UserInfo userInfo = this.userFacade.getUser(userId);
+        UserResponse response = UserResponse.from(userInfo);
         return ApiResponse.success(response);
     }
 }

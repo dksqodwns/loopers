@@ -3,6 +3,7 @@ package com.loopers.domain.user;
 import com.loopers.application.user.UserCommand.UserCreateCommand;
 import com.loopers.support.error.CoreException;
 import com.loopers.support.error.ErrorType;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,9 +24,14 @@ public class UserService {
     }
 
     @Transactional
-    public User createUser(UserCreateCommand command) {
+    public UserModel createUser(UserCreateCommand command) {
         this.validateUserCreated(command);
-        User user = User.create(command);
+        UserModel user = UserModel.create(command);
         return this.userRepository.save(user);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<UserModel> getUserByUserId(String userId) {
+        return this.userRepository.findByUserId(userId);
     }
 }
