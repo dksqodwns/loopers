@@ -13,14 +13,14 @@ import lombok.NoArgsConstructor;
 @Table(name = "members")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User extends BaseEntity {
+public class UserModel extends BaseEntity {
     private String userId;
     private String username;
     private String email;
     private Gender gender;
     private LocalDate birthDate;
 
-    private User(String userId, String username, String email, Gender gender, LocalDate birthDate) {
+    private UserModel(String userId, String username, String email, Gender gender, LocalDate birthDate) {
         UserValidator.validate(userId, email, gender);
         this.userId = userId;
         this.username = username;
@@ -29,8 +29,8 @@ public class User extends BaseEntity {
         this.birthDate = birthDate;
     }
 
-    public static User create(UserCreateCommand command) {
-        return new User(
+    public static UserModel create(UserCreateCommand command) {
+        return new UserModel(
                 command.userId(),
                 command.username(),
                 command.email(),
