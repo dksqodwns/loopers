@@ -9,7 +9,6 @@ import com.loopers.interfaces.api.user.UserDto.UserCreateRequest;
 import com.loopers.support.error.CoreException;
 import com.loopers.support.error.ErrorType;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -97,8 +96,9 @@ class UserTest {
         @Test
         void createUserWithInvalidBirthDate() {
             String invalidBirthDate = "08/01/1998";
+            String StringGender = "MALE";
             UserCreateRequest dto = new UserCreateRequest(
-                    userId, username, email, gender, invalidBirthDate
+                    userId, username, email, StringGender, invalidBirthDate
             );
             CoreException coreException = assertThrows(CoreException.class, dto::toCommand);
             assertThat(coreException.getErrorType()).isEqualTo(ErrorType.BAD_REQUEST);

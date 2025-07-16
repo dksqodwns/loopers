@@ -6,8 +6,8 @@ import static com.loopers.interfaces.api.user.UserDto.UserResponse;
 import com.loopers.application.user.UserFacade;
 import com.loopers.application.user.UserInfo;
 import com.loopers.interfaces.api.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +20,7 @@ public class UserController {
     private final UserFacade userFacade;
 
     @PostMapping("")
-    public ApiResponse<UserResponse> createUser(@RequestBody @Validated UserCreateRequest request) {
+    public ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreateRequest request) {
         UserInfo userInfo = this.userFacade.createUser(request.toCommand());
         UserResponse response = UserResponse.from(userInfo);
 
