@@ -4,12 +4,16 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.loopers.application.user.UserCommand.UserCreateCommand;
+import com.loopers.domain.user.Gender;
+import com.loopers.domain.user.UserModel;
 import com.loopers.infrastructure.user.UserJpaRepository;
 import com.loopers.interfaces.api.ApiResponse.Metadata.Result;
 import com.loopers.interfaces.api.user.UserDto;
 import com.loopers.interfaces.api.user.UserDto.UserCreateRequest;
 import com.loopers.interfaces.api.user.UserDto.UserResponse;
 import com.loopers.utils.DatabaseCleanUp;
+import java.time.LocalDate;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -51,7 +55,6 @@ class UserApiE2ETest {
     @DisplayName("POST /api/v1/users")
     @Nested
     class POST {
-
         @DisplayName("회원가입 성공 시, 유저 정보를 반환한다.")
         @Test
         void returnUserInfo_whenUserCreated() {
@@ -101,6 +104,69 @@ class UserApiE2ETest {
                     () -> assertTrue(response.getStatusCode().is4xxClientError()),
                     () -> assertThat(response.getBody().meta().result()).isEqualTo(Result.FAIL)
             );
+        }
+    }
+
+    @DisplayName("GET /api/v1/users/me")
+    @Nested
+    class Get {
+
+        @DisplayName("내 정보 조회에 성공 할 경우, 해당하는 유저 정보를 응답으로 반환한다.")
+        @Test
+        void returnUserInfo_whenUserFound() {
+            UserCreateCommand command = new UserCreateCommand(
+                    "test", "테스터", "test@test.com", Gender.MALE, LocalDate.of(1998, 1, 8)
+            );
+            UserModel savedUser = userJpaRepository.save(UserModel.create(command));
+            String requestUrl = END_POINT + "/me";
+
+            ParameterizedTypeReference<ApiResponse<UserDto.UserResponse>>
+                    responseType = new ParameterizedTypeReference<>() {
+            };
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("X-USER-ID", "test");
+
+            HttpEntity<UserDto.UserCreateRequest> requestEntity = new HttpEntity<>(null, headers);
+
+            ResponseEntity<ApiResponse<UserDto.UserResponse>> response = testRestTemplate.exchange(
+                    requestUrl, HttpMethod.GET, requestEntity, responseType
+            );
+            UserResponse responseBodyData = response.getBody().data();
+
+            assertAll(
+                    () -> assertTrue(response.getStatusCode().is2xxSuccessful()),
+                    () -> assertThat(responseBodyData.userId()).isEqualTo(savedUser.getUserId()),
+                    () -> assertThat(responseBodyData.username()).isEqualTo(savedUser.getUsername())
+            );
+        }
+
+        @DisplayName("존재하지 않는 ID로 조회 할 경우, 404 응답을 반환한다.")
+        @Test
+        void return404_whenUserNotFound() {
+            String requestUrl = END_POINT + "/me";
+
+            ParameterizedTypeReference<ApiResponse<UserDto.UserResponse>> responseType = new ParameterizedTypeReference<>() {
+            };
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("X-USER-ID", "non-exists-user-id");
+
+            HttpEntity<UserDto.UserCreateRequest> requestEntity = new HttpEntity<>(null, headers);
+
+            ResponseEntity<ApiResponse<UserDto.UserResponse>> response = testRestTemplate.exchange(
+                    requestUrl, HttpMethod.GET, requestEntity, responseType
+            );
+
+            System.out.println(response);
+            System.out.println(response.getStatusCode());
+            System.out.println(response.getBody());
+
+            assertAll(
+                    () -> assertTrue(response.getStatusCode().is4xxClientError()),
+                    () -> assertThat(response.getBody().meta().result()).isEqualTo(Result.FAIL)
+            );
+
         }
     }
 }
