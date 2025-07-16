@@ -1,8 +1,12 @@
 package com.loopers.domain.user;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 
 import com.loopers.application.user.UserCommand.UserCreateCommand;
+import com.loopers.support.error.CoreException;
+import com.loopers.support.error.ErrorType;
 import com.loopers.utils.DatabaseCleanUp;
 import java.time.LocalDate;
 import org.junit.jupiter.api.AfterEach;
@@ -55,6 +59,24 @@ public class UserServiceIntegrationTest {
             );
             userService.createUser(command);
             Mockito.verify(spyUserRepository).save(any(User.class));
+        }
+
+        @DisplayName("중복된 유저 ID로 가입 시, 저장이 실패한다.")
+        @Test
+        void fail_whenRegisterExistsUserId() {
+            UserService userService = new UserService(spyUserRepository);
+            UserCreateCommand command = new UserCreateCommand(
+                    userId, username, email, gender, birthDate
+            );
+            userService.createUser(command);
+
+            String existsUserId = "test";
+            UserCreateCommand existsCommand = new UserCreateCommand(
+                    existsUserId, username, email, gender, birthDate
+            );
+
+            CoreException userIdConflictException = assertThrows(CoreException.class, () -> userService.createUser(existsCommand));
+            assertThat(userIdConflictException.getErrorType()).isEqualTo(ErrorType.CONFLICT);
         }
     }
 }
