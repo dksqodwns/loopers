@@ -76,7 +76,7 @@ public class UserServiceIntegrationTest {
             UserCreateCommand existsCommand = new UserCreateCommand(
                     existsUserId, username, email, gender, birthDate
             );
-
+            // 호출에 대한 ...
             CoreException userIdConflictException = assertThrows(CoreException.class,
                     () -> userService.createUser(existsCommand));
             assertThat(userIdConflictException.getErrorType()).isEqualTo(ErrorType.CONFLICT);

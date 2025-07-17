@@ -25,6 +25,7 @@ public class UserDto {
         }
     }
 
+
     public record UserCreateRequest(
             @NotNull(message = "ID는 비어있을 수 없습니다.")
             String userId,
@@ -36,7 +37,7 @@ public class UserDto {
             @Email(message = "유효한 이메일 형식이 아닙니다.")
             String email,
 
-//            @NotNull(message = "성별은 비어있을 수 없습니다.")
+            @NotNull(message = "성별은 비어있을 수 없습니다.")
             String gender,
 
             @NotNull(message = "생년월일은 비어있을 수 없습니다.")
