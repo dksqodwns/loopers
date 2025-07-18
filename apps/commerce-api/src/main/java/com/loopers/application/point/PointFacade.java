@@ -16,8 +16,7 @@ public class PointFacade {
     private final PointService pointService;
 
     public PointInfo chargePoint(PointChargeCommand command) {
-        PointModel chargedPointModel = pointService.charge(command.userId(), command.point());
-
+        PointModel chargedPointModel = pointService.charge(command);
         return PointInfo.from(chargedPointModel);
     }
 
