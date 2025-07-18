@@ -8,13 +8,17 @@ import com.loopers.application.point.PointInfo;
 import com.loopers.application.user.UserFacade;
 import com.loopers.application.user.UserInfo;
 import com.loopers.interfaces.api.ApiResponse;
+import com.loopers.interfaces.api.point.PointDto.PointChargeRequest;
 import com.loopers.interfaces.api.point.PointDto.PointResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,17 +46,19 @@ public class UserController {
         return ApiResponse.success(response);
     }
 
+    @Validated
     @PostMapping("/points")
-    public ApiResponse<PointResponse> charge(HttpServletRequest httpServletRequest, @RequestBody @Valid int point) {
-        String userId = httpServletRequest.getHeader("X-USER-ID");
-        PointInfo pointInfo = this.pointFacade.chargePoint(userId, point);
+    public ApiResponse<PointResponse> charge(
+            @RequestHeader("X-USER-ID") @NotNull(message = "X-USER-ID 헤더는 비어있을 수 없습니다.") String userId,
+            @RequestBody @Valid PointChargeRequest request) {
+        PointInfo pointInfo = this.pointFacade.chargePoint(request.toCommand(userId));
         PointResponse response = PointResponse.from(pointInfo);
         return ApiResponse.success(response);
     }
 
+    @Validated
     @GetMapping("/points")
-    public ApiResponse<PointResponse> getPoints(HttpServletRequest request) {
-        String userId = request.getHeader("X-USER-ID");
+    public ApiResponse<PointResponse> getPoints(@RequestHeader("X-USER-ID") @NotNull(message = "X-USER-ID 헤더는 비어있을 수 없습니다.") String userId) {
         PointInfo pointInfo = this.pointFacade.getPoints(userId);
         PointResponse response = PointResponse.from(pointInfo);
 

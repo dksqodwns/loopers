@@ -29,7 +29,9 @@ public class PointService {
     @Transactional(readOnly = true)
     public PointModel getPoints(String userId) {
         return userRepository.findByUserId(userId)
-                .flatMap(user -> this.pointRepository.findByUserId(user.getUserId()))
+                .map(user -> pointRepository
+                        .findByUserId(user.getUserId())
+                        .orElseGet(() -> pointRepository.save(PointModel.create(userId))))
                 .orElse(null);
     }
 
