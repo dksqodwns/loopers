@@ -69,9 +69,7 @@ public class PointServiceIntegrationTest {
             PointModel points = pointService.getPoints(user.getUserId());
 
             // then
-            System.out.println("응답: " + points);
             assertThat(points).isNotNull();
-
         }
 
         @DisplayName("해당 ID의 회원이 존재하지 않으면 null이 반환된다.")

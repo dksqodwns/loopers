@@ -82,9 +82,6 @@ public class PointApiE2ETest {
             );
 
             // then
-            System.out.println("응답: " + response);
-            System.out.println("응답: " + response.getBody());
-
             assertAll(
                     () -> assertTrue(response.getStatusCode().is2xxSuccessful()),
                     () -> assertThat(response.getBody().meta().result()).isEqualTo(Result.SUCCESS),
