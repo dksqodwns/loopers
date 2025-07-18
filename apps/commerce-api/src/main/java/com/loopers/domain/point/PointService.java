@@ -26,7 +26,7 @@ public class PointService {
         return this.pointRepository.save(chargedPointModel);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public PointModel getPoints(String userId) {
         return userRepository.findByUserId(userId)
                 .map(user -> pointRepository

@@ -37,6 +37,7 @@ class UserTest {
         @DisplayName("모든 값이 주어지면 정상적인 유저가 생성된다.")
         @Test
         void createUser() {
+            // given
             UserCreateCommand command = new UserCreateCommand(
                     userId,
                     username,
@@ -44,8 +45,11 @@ class UserTest {
                     gender,
                     birthDate
             );
+
+            // when
             UserModel user = UserModel.create(command);
 
+            // then
             assertAll(
                     () -> assertThat(user.getId()).isNotNull(),
                     () -> assertThat(user.getUsername()).isEqualTo(username),
@@ -61,46 +65,65 @@ class UserTest {
         @DisplayName("유저의 ID가 비어있으면, User 객체 생성에 실패한다.")
         @Test
         void createUserWithEmptyId() {
+            // given
             String empty = " ";
             UserCreateCommand command = new UserCreateCommand(
                     empty, username, email, gender, birthDate
             );
+
+            // when
             CoreException coreException = assertThrows(CoreException.class, () -> UserModel.create(command));
+
+            // then
             assertThat(coreException.getErrorType()).isEqualTo(ErrorType.BAD_REQUEST);
         }
 
         @DisplayName("유저의 ID가 영문 및 숫자 10자 이내 형식에 맞지 않으면, User 객체 생성에 실패한다.")
         @Test
         void createUserWithInvalidId() {
+            // given
             String invalidUserId = "something-wrong-user-id";
             UserCreateCommand command = new UserCreateCommand(
                     invalidUserId, username, email, gender, birthDate
             );
+
+            // when
             CoreException coreException = assertThrows(CoreException.class, () -> UserModel.create(command));
+
+            // then
             assertThat(coreException.getErrorType()).isEqualTo(ErrorType.BAD_REQUEST);
         }
 
         @DisplayName("이메일이 형식에 맞지 않으면, User 객체 생성에 실패한다.")
         @Test
         void createUserWithInvalidEmail() {
+            // given
             String invalidEmail = "something-wrong-email";
             UserCreateCommand command = new UserCreateCommand(
                     userId, username, invalidEmail, gender, birthDate
             );
 
+            // when
             CoreException coreException = assertThrows(CoreException.class, () -> UserModel.create(command));
+
+            // then
             assertThat(coreException.getErrorType()).isEqualTo(ErrorType.BAD_REQUEST);
         }
 
         @DisplayName("생년월일 형식이 yyyy-MM-dd가 아니면, User 객체 생성에 실패한다.")
         @Test
         void createUserWithInvalidBirthDate() {
+            // given
             String invalidBirthDate = "08/01/1998";
             String StringGender = "MALE";
             UserCreateRequest dto = new UserCreateRequest(
                     userId, username, email, StringGender, invalidBirthDate
             );
+
+            // when
             CoreException coreException = assertThrows(CoreException.class, dto::toCommand);
+
+            // then
             assertThat(coreException.getErrorType()).isEqualTo(ErrorType.BAD_REQUEST);
         }
     }

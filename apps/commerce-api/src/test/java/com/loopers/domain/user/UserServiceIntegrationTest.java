@@ -55,17 +55,23 @@ public class UserServiceIntegrationTest {
         @DisplayName("유저 저장이 수행된다.")
         @Test
         void createUser_whenRegisterUser() {
+            // given
             UserService userService = new UserService(spyUserRepository);
             UserCreateCommand command = new UserCreateCommand(
                     userId, username, email, gender, birthDate
             );
+
+            // when
             userService.createUser(command);
+
+            // then
             Mockito.verify(spyUserRepository).save(any(UserModel.class));
         }
 
         @DisplayName("중복된 유저 ID로 가입 시, 저장이 실패한다.")
         @Test
         void fail_whenRegisterExistsUserId() {
+            // given
             UserService userService = new UserService(spyUserRepository);
             UserCreateCommand command = new UserCreateCommand(
                     userId, username, email, gender, birthDate
@@ -77,8 +83,11 @@ public class UserServiceIntegrationTest {
                     existsUserId, username, email, gender, birthDate
             );
 
+            // when
             CoreException userIdConflictException = assertThrows(CoreException.class,
                     () -> userService.createUser(existsCommand));
+
+            // then
             assertThat(userIdConflictException.getErrorType()).isEqualTo(ErrorType.CONFLICT);
         }
     }
@@ -89,14 +98,17 @@ public class UserServiceIntegrationTest {
         @DisplayName("해당 ID의 회원이 존재 할 경우, 회원 정보가 반환 된다.")
         @Test
         void getUser_whenUserExists() {
+            // given
             UserService userService = new UserService(spyUserRepository);
             UserCreateCommand command = new UserCreateCommand(
                     userId, username, email, gender, birthDate
             );
             UserModel savedUser = userService.createUser(command);
 
+            // when
             Optional<UserModel> findUser = userService.getUserByUserId(userId);
 
+            // then
             assertAll(
                     () -> assertThat(findUser).isNotNull(),
                     () -> assertThat(userId).isEqualTo(findUser.get().getUserId()),
@@ -107,9 +119,13 @@ public class UserServiceIntegrationTest {
         @DisplayName("해당 ID의 회원이 존재하지 않을 경우, null이 반환 된다.")
         @Test
         void getNull_whenUserNotExists() {
+            // given
             UserService userService = new UserService(spyUserRepository);
+
+            // when
             Optional<UserModel> findUser = userService.getUserByUserId("non-exists-user-id");
 
+            // then
             assertThat(findUser).isEmpty();
         }
     }

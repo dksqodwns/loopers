@@ -41,9 +41,13 @@ public class PointServiceIntegrationTest {
         @DisplayName("존재하지 않는 유저 ID로 충전을 시도한 경우, 실패한다.")
         @Test
         void chargePoint_whenNotExistsUserId() {
+            // given
             PointService pointService = new PointService(spyUserRepository, spyPointRepository);
 
+            // when
             CoreException coreException = assertThrows(CoreException.class, () -> pointService.charge("non-exists-user-id", 1_000));
+
+            // then
             assertThat(coreException.getErrorType()).isEqualTo(ErrorType.NOT_FOUND);
         }
     }
@@ -55,12 +59,16 @@ public class PointServiceIntegrationTest {
         @DisplayName("해당 ID의 회원이 존재하면 보유 포인트가 반환된다.")
         @Test
         void getPoint_whenExistsUser() {
+            // given
             UserService userService = new UserService(spyUserRepository);
             PointService pointService = new PointService(spyUserRepository, spyPointRepository);
             UserCreateCommand command = new UserCreateCommand("test", "테스터", "test@test.com", Gender.MALE, LocalDate.of(1998, 1, 8));
             UserModel user = userService.createUser(command);
 
+            // when
             PointModel points = pointService.getPoints(user.getUserId());
+
+            // then
             System.out.println("응답: " + points);
             assertThat(points).isNotNull();
 
@@ -69,9 +77,13 @@ public class PointServiceIntegrationTest {
         @DisplayName("해당 ID의 회원이 존재하지 않으면 null이 반환된다.")
         @Test
         void getPoint_whenNotExistsUser() {
+            // given
             PointService pointService = new PointService(spyUserRepository, spyPointRepository);
+
+            // when
             PointModel points = pointService.getPoints("non-exists-user-id");
 
+            // then
             assertThat(points).isNull();
         }
     }

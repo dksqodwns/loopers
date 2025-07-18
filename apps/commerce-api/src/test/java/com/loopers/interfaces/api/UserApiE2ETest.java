@@ -59,6 +59,7 @@ class UserApiE2ETest {
         @DisplayName("회원가입 성공 시, 유저 정보를 반환한다.")
         @Test
         void returnUserInfo_whenUserCreated() {
+            // given
             UserDto.UserCreateRequest request = new UserCreateRequest(
                     "test", "테스터", "test@test.com", "MALE", "1998-01-08"
             );
@@ -70,12 +71,14 @@ class UserApiE2ETest {
             ParameterizedTypeReference<ApiResponse<UserDto.UserResponse>> responseType = new ParameterizedTypeReference<>() {
             };
 
+            // when
             ResponseEntity<ApiResponse<UserDto.UserResponse>> response = testRestTemplate.exchange(
                     END_POINT, HttpMethod.POST, requestEntity, responseType
             );
 
             UserResponse responseBodyData = response.getBody().data();
 
+            // then
             assertAll(
                     () -> assertTrue(response.getStatusCode().is2xxSuccessful()),
                     () -> assertThat(response.getBody().meta().result()).isEqualTo(Result.SUCCESS),
@@ -88,6 +91,7 @@ class UserApiE2ETest {
         @DisplayName("성별이 없으면 400 에러를 반환한다.")
         @Test
         void return400_whenGenderIsNull() {
+            // given
             UserDto.UserCreateRequest request = new UserCreateRequest(
                     "test", "테스터", "test@test.com", null, "1998-01-08"
             );
@@ -99,10 +103,12 @@ class UserApiE2ETest {
             ParameterizedTypeReference<?> responseType = new ParameterizedTypeReference<>() {
             };
 
+            // when
             ResponseEntity<?> response = testRestTemplate.exchange(
                     END_POINT, HttpMethod.POST, requestEntity, responseType
             );
 
+            // then
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         }
 
@@ -114,6 +120,7 @@ class UserApiE2ETest {
         @DisplayName("내 정보 조회에 성공 할 경우, 해당하는 유저 정보를 응답으로 반환한다.")
         @Test
         void returnUserInfo_whenUserFound() {
+            // given
             UserCreateCommand command = new UserCreateCommand(
                     "test", "테스터", "test@test.com", Gender.MALE, LocalDate.of(1998, 1, 8)
             );
@@ -129,11 +136,13 @@ class UserApiE2ETest {
 
             HttpEntity<UserDto.UserCreateRequest> requestEntity = new HttpEntity<>(null, headers);
 
+            // when
             ResponseEntity<ApiResponse<UserDto.UserResponse>> response = testRestTemplate.exchange(
                     requestUrl, HttpMethod.GET, requestEntity, responseType
             );
             UserResponse responseBodyData = response.getBody().data();
 
+            // then
             assertAll(
                     () -> assertTrue(response.getStatusCode().is2xxSuccessful()),
                     () -> assertThat(responseBodyData.userId()).isEqualTo(savedUser.getUserId()),
@@ -144,6 +153,7 @@ class UserApiE2ETest {
         @DisplayName("존재하지 않는 ID로 조회 할 경우, 404 응답을 반환한다.")
         @Test
         void return404_whenUserNotFound() {
+            // given
             String requestUrl = END_POINT + "/me";
 
             ParameterizedTypeReference<?> responseType = new ParameterizedTypeReference<>() {
@@ -154,9 +164,12 @@ class UserApiE2ETest {
 
             HttpEntity<UserDto.UserCreateRequest> requestEntity = new HttpEntity<>(null, headers);
 
+            // when
             ResponseEntity<?> response = testRestTemplate.exchange(
                     requestUrl, HttpMethod.GET, requestEntity, responseType
             );
+
+            // then
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         }
     }
