@@ -1,8 +1,9 @@
 package com.loopers.application.point;
 
 public class PointCommand {
-    public record PointChargeCommand(
+    public record ChargeCommand(
             String userId,
             int point
-    ) { }
+    ) {
+    }
 }

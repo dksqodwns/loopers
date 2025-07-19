@@ -1,6 +1,6 @@
 package com.loopers.domain.point;
 
-import com.loopers.application.point.PointCommand.PointChargeCommand;
+import com.loopers.application.point.PointCommand.ChargeCommand;
 import com.loopers.domain.user.UserRepository;
 import com.loopers.support.error.CoreException;
 import com.loopers.support.error.ErrorType;
@@ -16,7 +16,7 @@ public class PointService {
     private final PointRepository pointRepository;
 
     @Transactional
-    public PointModel charge(PointChargeCommand command) {
+    public PointModel charge(ChargeCommand command) {
         userRepository.findByUserId(command.userId())
                 .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND, "유저를 찾을 수 없습니다."));
 

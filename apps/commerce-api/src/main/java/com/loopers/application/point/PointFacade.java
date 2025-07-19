@@ -1,6 +1,6 @@
 package com.loopers.application.point;
 
-import com.loopers.application.point.PointCommand.PointChargeCommand;
+import com.loopers.application.point.PointCommand.ChargeCommand;
 import com.loopers.domain.point.PointModel;
 import com.loopers.domain.point.PointService;
 import com.loopers.domain.user.UserService;
@@ -15,7 +15,7 @@ public class PointFacade {
     private final UserService userService;
     private final PointService pointService;
 
-    public PointInfo chargePoint(PointChargeCommand command) {
+    public PointInfo chargePoint(ChargeCommand command) {
         PointModel chargedPointModel = pointService.charge(command);
         return PointInfo.from(chargedPointModel);
     }
