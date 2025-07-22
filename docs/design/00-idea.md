@@ -31,7 +31,7 @@
       : 상품의 브랜드를 조회 할 수 있다.
 
 - 상품 좋아요
-    - 조회 (/api/v1/users/{userId}/likes)
+    - 조회 (GET /api/v1/users/{userId}/likes)
       : 유저가 좋아요 한 상품 목록을 조회 할 수 있다.
 
     - 등록 (POST /api/v1/products/{productId}/likes)
