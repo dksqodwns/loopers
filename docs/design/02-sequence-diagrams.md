@@ -166,6 +166,7 @@ sequenceDiagram
 ---
 title: 주문 요청
 ---
+%% TODO: 유저 돈 모자라면 실패하는 로직은 어디감?
 
 sequenceDiagram
     participant u as User
