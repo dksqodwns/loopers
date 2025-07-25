@@ -194,6 +194,14 @@ sequenceDiagram
         ps -->> of: 500 INTERNAL SERVER ERROR
     else
         ps ->> of: 상품 및 재고 확인 정보 반환
+        of ->> us: 유저 포인트 조회 요청
+        alt 필요한 포인트보다 보유 포인트가 모자랄 경우
+            us -->> of: 400 BAD REQUEST
+        else 유저 포인트 조회 실패
+            us -->> of: 500 INTERNAL SERVER ERROR
+        else
+            us ->> of: 포인트 정보 전달
+        end
         of ->> ps: 상품 재고 차감 요청
         alt 재고 차감 요청 실패
             ps -->> of: 500 INTERNAL SERVER ERROR
@@ -218,28 +226,28 @@ title: 주문 내역 조회
 sequenceDiagram
     participant u as User
     participant uc as UserController
-    participant uf as UserFacade
+    participant of as OrderFacade
     participant us as UserService
     participant os as OrderService
-    u ->> uc: 주문 내역 조회 요청 (GET /api/v1/users/{userId}/orders) (X-USER-ID, userId)
-    uc ->> uf: 주문 내역 요청 (X-USER-ID, userId)
-    uf ->> us: 사용자 인증 정보 확인 (X-USER-ID, userId)
+    u ->> uc: 주문 내역 조회 요청 (GET /api/v1/orders) (X-USER-ID, userId)
+    uc ->> of: 주문 내역 요청 (X-USER-ID, userId)
+    of ->> us: 사용자 인증 정보 확인 (X-USER-ID, userId)
     alt 헤더, 사용자 미존재
-        us -->> uf: 401 UNAUTHORIZED
+        us -->> of: 401 UNAUTHORIZED
     else 헤더와 파라미터 불일치
-        us -->> uf: 403 FORBIDDEN
+        us -->> of: 403 FORBIDDEN
     else 사용자 정보 조회 실패
-        us -->> uf: 500 INTERNAL SERVRE ERROR
+        us -->> of: 500 INTERNAL SERVRE ERROR
     else
-        us ->> uf: 사용자 정보 반환
+        us ->> of: 사용자 정보 반환
     end
-    uf ->> os: 주문 정보 요청 (userId)
+    of ->> os: 주문 정보 요청 (userId)
     alt 주문 내역 조회 실패
-        os -->> uf: 500 INTERNAL SERVER ERROR
+        os -->> of: 500 INTERNAL SERVER ERROR
     else
-        os ->> uf: 주문 내역 반환
+        os ->> of: 주문 내역 반환
     end
-    uf ->> uc: 주문 내역 조회 결과 반환
+    of ->> uc: 주문 내역 조회 결과 반환
 ```
 
 ```mermaid
