@@ -5,12 +5,12 @@ import com.loopers.domain.user.UserRepository;
 import com.loopers.support.error.CoreException;
 import com.loopers.support.error.ErrorType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
 @RequiredArgsConstructor
-@Component
+@Service
 public class PointService {
     private final UserRepository userRepository;
     private final PointRepository pointRepository;
