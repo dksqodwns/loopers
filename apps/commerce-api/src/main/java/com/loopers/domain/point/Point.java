@@ -13,20 +13,20 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "points")
-public class PointModel extends BaseEntity {
+public class Point extends BaseEntity {
     private String userId;
     private int point;
 
-    private PointModel(String userId, int point) {
+    private Point(String userId, int point) {
         this.userId = userId;
         this.point = point;
     }
 
-    public static PointModel create(String userId) {
-        return new PointModel(userId, 0);
+    public static Point create(String userId) {
+        return new Point(userId, 0);
     }
 
-    public PointModel charge(int chargePoint) {
+    public Point charge(int chargePoint) {
         if (chargePoint < 0) {
             throw new CoreException(ErrorType.BAD_REQUEST, "0이하의 정수는 충전 할 수 없습니다.");
         }

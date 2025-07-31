@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import com.loopers.application.point.PointCommand.ChargeCommand;
 import com.loopers.application.user.UserCommand.UserCreateCommand;
 import com.loopers.domain.user.Gender;
-import com.loopers.domain.user.UserModel;
+import com.loopers.domain.user.User;
 import com.loopers.domain.user.UserRepository;
 import com.loopers.domain.user.UserService;
 import com.loopers.support.error.CoreException;
@@ -66,10 +66,10 @@ public class PointServiceIntegrationTest {
             UserService userService = new UserService(spyUserRepository);
             PointService pointService = new PointService(spyUserRepository, spyPointRepository);
             UserCreateCommand command = new UserCreateCommand("test", "테스터", "test@test.com", Gender.MALE, LocalDate.of(1998, 1, 8));
-            UserModel user = userService.createUser(command);
+            User user = userService.createUser(command);
 
             // when
-            PointModel points = pointService.getPoints(user.getUserId());
+            Point points = pointService.getPoints(user.getUserId());
 
             // then
             assertThat(points).isNotNull();
@@ -82,7 +82,7 @@ public class PointServiceIntegrationTest {
             PointService pointService = new PointService(spyUserRepository, spyPointRepository);
 
             // when
-            PointModel points = pointService.getPoints("non-exists-user-id");
+            Point points = pointService.getPoints("non-exists-user-id");
 
             // then
             assertThat(points).isNull();

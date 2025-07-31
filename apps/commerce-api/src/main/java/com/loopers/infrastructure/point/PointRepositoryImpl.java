@@ -1,6 +1,6 @@
 package com.loopers.infrastructure.point;
 
-import com.loopers.domain.point.PointModel;
+import com.loopers.domain.point.Point;
 import com.loopers.domain.point.PointRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -12,12 +12,12 @@ public class PointRepositoryImpl implements PointRepository {
     private final PointJpaRepository pointJpaRepository;
 
     @Override
-    public PointModel save(PointModel pointModel) {
-        return this.pointJpaRepository.save(pointModel);
+    public Point save(Point point) {
+        return this.pointJpaRepository.save(point);
     }
 
     @Override
-    public Optional<PointModel> findByUserId(String userId) {
+    public Optional<Point> findByUserId(String userId) {
         return this.pointJpaRepository.findByUserId(userId);
     }
 }

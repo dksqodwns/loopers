@@ -24,14 +24,14 @@ public class UserService {
     }
 
     @Transactional
-    public UserModel createUser(UserCreateCommand command) {
+    public User createUser(UserCreateCommand command) {
         this.validateUserCreated(command);
-        UserModel user = UserModel.create(command);
+        User user = User.create(command);
         return this.userRepository.save(user);
     }
 
     @Transactional(readOnly = true)
-    public Optional<UserModel> getUserByUserId(String userId) {
+    public Optional<User> getUserByUserId(String userId) {
         return this.userRepository.findByUserId(userId);
     }
 

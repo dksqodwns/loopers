@@ -47,7 +47,7 @@ class UserTest {
             );
 
             // when
-            UserModel user = UserModel.create(command);
+            User user = User.create(command);
 
             // then
             assertAll(
@@ -72,7 +72,7 @@ class UserTest {
             );
 
             // when
-            CoreException coreException = assertThrows(CoreException.class, () -> UserModel.create(command));
+            CoreException coreException = assertThrows(CoreException.class, () -> User.create(command));
 
             // then
             assertThat(coreException.getErrorType()).isEqualTo(ErrorType.BAD_REQUEST);
@@ -88,7 +88,7 @@ class UserTest {
             );
 
             // when
-            CoreException coreException = assertThrows(CoreException.class, () -> UserModel.create(command));
+            CoreException coreException = assertThrows(CoreException.class, () -> User.create(command));
 
             // then
             assertThat(coreException.getErrorType()).isEqualTo(ErrorType.BAD_REQUEST);
@@ -104,7 +104,7 @@ class UserTest {
             );
 
             // when
-            CoreException coreException = assertThrows(CoreException.class, () -> UserModel.create(command));
+            CoreException coreException = assertThrows(CoreException.class, () -> User.create(command));
 
             // then
             assertThat(coreException.getErrorType()).isEqualTo(ErrorType.BAD_REQUEST);

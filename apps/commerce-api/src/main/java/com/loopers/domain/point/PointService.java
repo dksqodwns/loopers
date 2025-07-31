@@ -16,23 +16,23 @@ public class PointService {
     private final PointRepository pointRepository;
 
     @Transactional
-    public PointModel charge(ChargeCommand command) {
+    public Point charge(ChargeCommand command) {
         userRepository.findByUserId(command.userId())
                 .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND, "유저를 찾을 수 없습니다."));
 
-        PointModel pointModel = pointRepository.findByUserId(command.userId())
-                .orElseGet(() -> PointModel.create(command.userId()));
-        PointModel chargedPointModel = pointModel.charge(command.point());
+        Point point = pointRepository.findByUserId(command.userId())
+                .orElseGet(() -> Point.create(command.userId()));
+        Point chargedPoint = point.charge(command.point());
 
-        return this.pointRepository.save(chargedPointModel);
+        return this.pointRepository.save(chargedPoint);
     }
 
     @Transactional
-    public PointModel getPoints(String userId) {
+    public Point getPoints(String userId) {
         return userRepository.findByUserId(userId)
                 .map(user -> pointRepository
                         .findByUserId(user.getUserId())
-                        .orElseGet(() -> pointRepository.save(PointModel.create(userId))))
+                        .orElseGet(() -> pointRepository.save(Point.create(userId))))
                 .orElse(null);
     }
 

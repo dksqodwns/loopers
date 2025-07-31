@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.loopers.application.user.UserCommand.UserCreateCommand;
 import com.loopers.domain.user.Gender;
-import com.loopers.domain.user.UserModel;
+import com.loopers.domain.user.User;
 import com.loopers.infrastructure.user.UserJpaRepository;
 import com.loopers.interfaces.api.ApiResponse.Metadata.Result;
 import com.loopers.interfaces.api.user.UserDto;
@@ -124,7 +124,7 @@ class UserApiE2ETest {
             UserCreateCommand command = new UserCreateCommand(
                     "test", "테스터", "test@test.com", Gender.MALE, LocalDate.of(1998, 1, 8)
             );
-            UserModel savedUser = userJpaRepository.save(UserModel.create(command));
+            User savedUser = userJpaRepository.save(User.create(command));
             String requestUrl = END_POINT + "/me";
 
             ParameterizedTypeReference<ApiResponse<UserDto.UserResponse>>
