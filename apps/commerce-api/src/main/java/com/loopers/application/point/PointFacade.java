@@ -1,7 +1,7 @@
 package com.loopers.application.point;
 
 import com.loopers.application.point.PointCommand.ChargeCommand;
-import com.loopers.domain.point.PointModel;
+import com.loopers.domain.point.Point;
 import com.loopers.domain.point.PointService;
 import com.loopers.domain.user.UserService;
 import com.loopers.support.error.CoreException;
@@ -16,21 +16,21 @@ public class PointFacade {
     private final PointService pointService;
 
     public PointInfo chargePoint(ChargeCommand command) {
-        PointModel chargedPointModel = pointService.charge(command);
-        return PointInfo.from(chargedPointModel);
+        Point chargedPoint = pointService.charge(command);
+        return PointInfo.from(chargedPoint);
     }
 
     public PointInfo getPoints(String userId) {
-        PointModel pointModel;
+        Point point;
 
         userService.getUserByUserId(userId)
                 .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND, "유저를 찾을 수 없습니다."));
 
-        pointModel = pointService.getPoints(userId);
-        if (pointModel == null) {
-            pointModel = PointModel.create(userId);
+        point = pointService.getPoints(userId);
+        if (point == null) {
+            point = Point.create(userId);
         }
 
-        return PointInfo.from(pointModel);
+        return PointInfo.from(point);
     }
 }

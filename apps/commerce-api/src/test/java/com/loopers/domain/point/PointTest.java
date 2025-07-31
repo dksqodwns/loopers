@@ -18,10 +18,10 @@ public class PointTest {
         @Test
         void charge_whenNegative() {
             // given
-            PointModel pointModel = PointModel.create("test");
+            Point point = Point.create("test");
 
             // when
-            CoreException coreException = assertThrows(CoreException.class, () -> pointModel.charge(-1));
+            CoreException coreException = assertThrows(CoreException.class, () -> point.charge(-1));
 
             // then
             Assertions.assertThat(coreException.getErrorType()).isEqualTo(ErrorType.BAD_REQUEST);

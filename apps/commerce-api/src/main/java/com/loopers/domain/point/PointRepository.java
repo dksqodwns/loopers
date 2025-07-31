@@ -3,7 +3,7 @@ package com.loopers.domain.point;
 import java.util.Optional;
 
 public interface PointRepository {
-    PointModel save(PointModel pointModel);
+    Point save(Point point);
 
-    Optional<PointModel> findByUserId(String userId);
+    Optional<Point> findByUserId(String userId);
 }

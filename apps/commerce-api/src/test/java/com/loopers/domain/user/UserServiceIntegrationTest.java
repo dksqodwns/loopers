@@ -65,7 +65,7 @@ public class UserServiceIntegrationTest {
             userService.createUser(command);
 
             // then
-            Mockito.verify(spyUserRepository).save(any(UserModel.class));
+            Mockito.verify(spyUserRepository).save(any(User.class));
         }
 
         @DisplayName("중복된 유저 ID로 가입 시, 저장이 실패한다.")
@@ -103,10 +103,10 @@ public class UserServiceIntegrationTest {
             UserCreateCommand command = new UserCreateCommand(
                     userId, username, email, gender, birthDate
             );
-            UserModel savedUser = userService.createUser(command);
+            User savedUser = userService.createUser(command);
 
             // when
-            Optional<UserModel> findUser = userService.getUserByUserId(userId);
+            Optional<User> findUser = userService.getUserByUserId(userId);
 
             // then
             assertAll(
@@ -123,7 +123,7 @@ public class UserServiceIntegrationTest {
             UserService userService = new UserService(spyUserRepository);
 
             // when
-            Optional<UserModel> findUser = userService.getUserByUserId("non-exists-user-id");
+            Optional<User> findUser = userService.getUserByUserId("non-exists-user-id");
 
             // then
             assertThat(findUser).isEmpty();

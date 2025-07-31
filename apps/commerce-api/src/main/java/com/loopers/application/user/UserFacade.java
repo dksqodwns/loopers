@@ -1,7 +1,7 @@
 package com.loopers.application.user;
 
 import com.loopers.domain.point.PointService;
-import com.loopers.domain.user.UserModel;
+import com.loopers.domain.user.User;
 import com.loopers.domain.user.UserService;
 import com.loopers.support.error.CoreException;
 import com.loopers.support.error.ErrorType;
@@ -15,7 +15,7 @@ public class UserFacade {
     private final PointService pointService;
 
     public UserInfo createUser(UserCommand.UserCreateCommand command) {
-        UserModel user = userService.createUser(command);
+        User user = userService.createUser(command);
         return UserInfo.from(user);
     }
 
