@@ -1,11 +1,9 @@
 package com.loopers.domain.brand;
 
+import com.loopers.domain.BaseEntity;
 import com.loopers.support.error.CoreException;
 import com.loopers.support.error.ErrorType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -15,10 +13,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "brands")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Brand {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Brand extends BaseEntity {
     private String name;
 
     private Brand(String name) {

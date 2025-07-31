@@ -33,7 +33,7 @@ class BrandFacadeTest {
         @DisplayName("존재하지 않는 브랜드 일 경우, 404 Not Found 에러를 반환한다.")
         @Test
         void return404NotFound_whenNotExistsBrandId() {
-            given(brandService.getBrand(new BrandCommand.Get(ArgumentMatchers.any())))
+            given(brandService.getBrandbyId(new BrandCommand.Get(ArgumentMatchers.any())))
                     .willReturn(Optional.empty());
 
             CoreException coreException = Assertions.assertThrows(CoreException.class, () -> brandFacade.getBrand(new BrandCommand.Get(777L)));
@@ -45,7 +45,7 @@ class BrandFacadeTest {
         void returnBrandInfo_whenExistsBrandId() {
             BrandInfo brandInfo = BrandInfo.from(Brand.create("카미엔"));
 
-            given(brandService.getBrand(new BrandCommand.Get(1L))).willReturn(Optional.of(brandInfo));
+            given(brandService.getBrandbyId(new BrandCommand.Get(1L))).willReturn(Optional.of(brandInfo));
             assertThat(brandFacade.getBrand(new BrandCommand.Get(1L))).isEqualTo(brandInfo);
         }
     }

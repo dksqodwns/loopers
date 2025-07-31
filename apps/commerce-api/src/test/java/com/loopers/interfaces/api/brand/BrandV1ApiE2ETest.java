@@ -53,7 +53,10 @@ public class BrandV1ApiE2ETest {
             };
 
             ResponseEntity<ApiResponse<BrandResponse>> response = testRestTemplate.exchange(
-                    END_POINT + "/" + savedBrand.getId(), HttpMethod.GET, new HttpEntity<>(savedBrand.getId()), responseType
+                    END_POINT + "/" + savedBrand.getId(),
+                    HttpMethod.GET,
+                    new HttpEntity<>(savedBrand.getId()),
+                    responseType
             );
 
             assertAll(
