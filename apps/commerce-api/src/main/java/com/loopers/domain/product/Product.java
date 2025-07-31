@@ -17,7 +17,6 @@ public class Product extends BaseEntity {
     private String name;
     private int price;
     private int stock;
-    private int likeCount;
 
 
     public Product(String name, int price, int stock, Long brand) {
@@ -26,6 +25,5 @@ public class Product extends BaseEntity {
         this.price = price;
         this.stock = stock;
         this.brandId = brand;
-        this.likeCount = 0;
     }
 }

@@ -17,5 +17,4 @@ public class BrandService {
         return this.brandRepository.findByBrandId(command.brandId())
                 .flatMap(brand -> Optional.of(BrandInfo.from(brand)));
     }
-
 }

@@ -1,21 +1,20 @@
 package com.loopers.interfaces.api.product;
 
-import com.loopers.application.product.ProductInfo;
+import com.loopers.application.product.ProductWithBrandInfo;
 
 public class ProductDto {
     class V1 {
-        public record ProductResponse(Long id, Long brandId, String name, int price, int stock, int likeCount) {
-            public static ProductResponse from(ProductInfo productInfo) {
+        public record ProductResponse(Long id, Long brandId, String name, int price, int stock, String brandName) {
+            public static ProductResponse from(ProductWithBrandInfo productInfo) {
                 return new ProductResponse(
-                        productInfo.id(),
+                        productInfo.productId(),
                         productInfo.brandId(),
-                        productInfo.name(),
+                        productInfo.productName(),
                         productInfo.price(),
                         productInfo.stock(),
-                        productInfo.likeCount()
+                        productInfo.brandName()
                 );
             }
         }
-
     }
 }

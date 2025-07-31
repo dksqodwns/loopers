@@ -2,15 +2,16 @@ package com.loopers.infrastructure.product;
 
 import com.loopers.domain.product.Product;
 import com.loopers.domain.product.ProductRepository;
-import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 @RequiredArgsConstructor
 @Repository
 public class ProductRepositoryImpl implements ProductRepository {
-    private ProductJpaRepository productJpaRepository;
+    private final ProductJpaRepository productJpaRepository;
 
     @Override
     public Product save(Product product) {
@@ -18,8 +19,8 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public List<Product> findAll() {
-        return List.of();
+    public Page<Product> findAll(Pageable pageable) {
+        return this.productJpaRepository.findAll(pageable);
     }
 
     @Override

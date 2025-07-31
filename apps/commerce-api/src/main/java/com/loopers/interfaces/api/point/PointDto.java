@@ -23,4 +23,6 @@ public class PointDto {
             return new ChargeCommand(userId, point);
         }
     }
+
+    
 }
