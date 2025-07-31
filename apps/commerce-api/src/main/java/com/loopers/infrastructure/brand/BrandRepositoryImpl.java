@@ -18,6 +18,6 @@ public class BrandRepositoryImpl implements BrandRepository {
 
     @Override
     public Optional<Brand> findByBrandId(Long brandId) {
-        return this.brandJpaRepository.findBrandById(brandId);
+        return this.brandJpaRepository.findById(brandId);
     }
 }

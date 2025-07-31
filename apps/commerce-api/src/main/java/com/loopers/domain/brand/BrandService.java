@@ -5,13 +5,15 @@ import com.loopers.application.brand.BrandInfo;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class BrandService {
     private final BrandRepository brandRepository;
 
-    public Optional<BrandInfo> getBrand(BrandCommand.Get command) {
+    @Transactional(readOnly = true)
+    public Optional<BrandInfo> getBrandbyId(BrandCommand.Get command) {
         return this.brandRepository.findByBrandId(command.brandId())
                 .flatMap(brand -> Optional.of(BrandInfo.from(brand)));
     }

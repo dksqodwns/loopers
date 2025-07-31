@@ -34,7 +34,7 @@ public class BrandServiceTest {
             given(mockBrandRepository.findByBrandId(anyLong()))
                     .willReturn(Optional.empty());
 
-            Optional<BrandInfo> result = brandService.getBrand(new BrandCommand.Get(777L));
+            Optional<BrandInfo> result = brandService.getBrandbyId(new BrandCommand.Get(777L));
 
             assertThat(result).isEmpty();
         }
