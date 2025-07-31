@@ -1,4 +1,4 @@
-package com.loopers.interfaces.api;
+package com.loopers.interfaces.api.point;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -8,8 +8,8 @@ import com.loopers.application.user.UserCommand.UserCreateCommand;
 import com.loopers.domain.user.Gender;
 import com.loopers.domain.user.User;
 import com.loopers.infrastructure.user.UserJpaRepository;
+import com.loopers.interfaces.api.ApiResponse;
 import com.loopers.interfaces.api.ApiResponse.Metadata.Result;
-import com.loopers.interfaces.api.point.PointDto;
 import com.loopers.interfaces.api.point.PointDto.PointChargeRequest;
 import com.loopers.interfaces.api.point.PointDto.PointResponse;
 import com.loopers.utils.DatabaseCleanUp;
