@@ -4,10 +4,10 @@ import com.loopers.domain.brand.Brand;
 import com.loopers.domain.brand.BrandRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 @RequiredArgsConstructor
-@Component
+@Repository
 public class BrandRepositoryImpl implements BrandRepository {
     private final BrandJpaRepository brandJpaRepository;
 
