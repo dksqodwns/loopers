@@ -29,13 +29,6 @@ public class ProductService {
                 optionalBrand.map(brand -> ProductWithBrandInfo.from(product, brand)));
     }
 
-//    public Page<ProductInfo> getProductList(String sortBy, Pageable pageable) {
-//        Sort sort = SortManager.productSort(sortBy);
-//        Pageable query = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
-//
-//        return this.productRepository.findAll(query)
-//                .map(ProductInfo::from);
-//    }
 
     @Transactional(readOnly = true)
     public List<ProductInfo> getProductList(ProductCommand.GetProductList command) {
@@ -44,17 +37,19 @@ public class ProductService {
                 .toList();
     }
 
-    public Product decreaseStock(ProductCommand.DecreaseStock command) {
+    public void decreaseStock(ProductCommand.DecreaseStock command) {
         Product product = productRepository.findByProductId(command.productId())
                 .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND,
                         "상품을 찾을 수 없습니다. productId: " + command.productId()));
         Product updatedProduct = product.decreaseStock(command.quantity());
-        return productRepository.save(updatedProduct);
+        productRepository.save(updatedProduct);
     }
-
-
-
-
-
-
 }
+
+//    public Page<ProductInfo> getProductList(String sortBy, Pageable pageable) {
+//        Sort sort = SortManager.productSort(sortBy);
+//        Pageable query = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+//
+//        return this.productRepository.findAll(query)
+//                .map(ProductInfo::from);
+//    }

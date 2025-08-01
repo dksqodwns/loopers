@@ -37,6 +37,14 @@ public class Point extends BaseEntity {
     }
 
     public Point use(Integer usePoint) {
+        if (usePoint < 0) {
+            throw new CoreException(ErrorType.BAD_REQUEST, "0 이하의 정수는 사용 할 수 없습니다.");
+        }
+
+        if (this.point < usePoint) {
+            throw new CoreException(ErrorType.BAD_REQUEST, "보유 포인트가 부족합니다.");
+        }
+
         this.point -= usePoint;
         return this;
     }
