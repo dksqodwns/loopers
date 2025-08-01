@@ -9,17 +9,19 @@ public record ProductWithBrandInfo(
         int price,
         int stock,
         Long brandId,
-        String brandName
+        String brandName,
+        Long likeCount
 ) {
 
-    public static ProductWithBrandInfo from(Product product, Brand brand) {
+    public static ProductWithBrandInfo from(Product product, Brand brand, Long likeCount) {
         return new ProductWithBrandInfo(
                 product.getId(),
                 product.getName(),
                 product.getPrice(),
                 product.getStock(),
                 brand.getId(),
-                brand.getName()
+                brand.getName(),
+                likeCount
         );
     }
 

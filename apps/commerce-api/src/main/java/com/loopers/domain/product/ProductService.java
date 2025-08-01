@@ -6,6 +6,7 @@ import com.loopers.application.product.ProductInfo;
 import com.loopers.application.product.ProductWithBrandInfo;
 import com.loopers.domain.brand.Brand;
 import com.loopers.domain.brand.BrandRepository;
+import com.loopers.domain.like.LikeRepository;
 import com.loopers.support.error.CoreException;
 import com.loopers.support.error.ErrorType;
 import java.util.List;
@@ -19,14 +20,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProductService {
     private final ProductRepository productRepository;
     private final BrandRepository brandRepository;
+    private final LikeRepository likeRepository;
 
+
+    @Transactional(readOnly = true)
     public Optional<ProductWithBrandInfo> getProductById(GetProduct command) {
         Optional<Product> optionalProduct = this.productRepository.findByProductId(command.productId());
         Optional<Brand> optionalBrand = optionalProduct.flatMap(product1 ->
                 brandRepository.findByBrandId(product1.getBrandId()));
-
+        Long likeCount = likeRepository.countByProductId(command.productId());
         return optionalProduct.flatMap(product ->
-                optionalBrand.map(brand -> ProductWithBrandInfo.from(product, brand)));
+                optionalBrand.map(brand -> ProductWithBrandInfo.from(product, brand, likeCount)));
     }
 
 
@@ -37,6 +41,8 @@ public class ProductService {
                 .toList();
     }
 
+
+    @Transactional()
     public void decreaseStock(ProductCommand.DecreaseStock command) {
         Product product = productRepository.findByProductId(command.productId())
                 .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND,
