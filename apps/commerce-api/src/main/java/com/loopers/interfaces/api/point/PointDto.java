@@ -1,6 +1,6 @@
 package com.loopers.interfaces.api.point;
 
-import com.loopers.application.point.PointCommand.ChargeCommand;
+import com.loopers.application.point.PointCommand.Charge;
 import com.loopers.application.point.PointInfo;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -19,8 +19,8 @@ public class PointDto {
             @PositiveOrZero
             int point
     ) {
-        public ChargeCommand toCommand(String userId) {
-            return new ChargeCommand(userId, point);
+        public Charge toCommand(String userId) {
+            return new Charge(userId, point);
         }
     }
 

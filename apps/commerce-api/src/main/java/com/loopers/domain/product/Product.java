@@ -15,8 +15,8 @@ import lombok.NoArgsConstructor;
 public class Product extends BaseEntity {
     private Long brandId;
     private String name;
-    private int price;
-    private int stock;
+    private Integer price;
+    private Integer stock;
 
 
     public Product(String name, int price, int stock, Long brand) {
@@ -25,5 +25,10 @@ public class Product extends BaseEntity {
         this.price = price;
         this.stock = stock;
         this.brandId = brand;
+    }
+
+    public Product decreaseStock(Integer quantity) {
+        this.stock -= quantity;
+        return this;
     }
 }

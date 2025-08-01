@@ -3,6 +3,7 @@ package com.loopers.domain.point;
 import com.loopers.domain.BaseEntity;
 import com.loopers.support.error.CoreException;
 import com.loopers.support.error.ErrorType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -14,10 +15,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "points")
 public class Point extends BaseEntity {
+    @Column(name = "ref_user_id")
     private String userId;
-    private int point;
+    private Integer point;
 
-    private Point(String userId, int point) {
+    private Point(String userId, Integer point) {
         this.userId = userId;
         this.point = point;
     }
@@ -26,11 +28,16 @@ public class Point extends BaseEntity {
         return new Point(userId, 0);
     }
 
-    public Point charge(int chargePoint) {
+    public Point charge(Integer chargePoint) {
         if (chargePoint < 0) {
             throw new CoreException(ErrorType.BAD_REQUEST, "0이하의 정수는 충전 할 수 없습니다.");
         }
         this.point += chargePoint;
+        return this;
+    }
+
+    public Point use(Integer usePoint) {
+        this.point -= usePoint;
         return this;
     }
 }
