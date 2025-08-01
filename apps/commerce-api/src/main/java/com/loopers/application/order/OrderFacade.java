@@ -19,7 +19,7 @@ public class OrderFacade {
     private final PointService pointService;
 
     public OrderResult order(OrderCriteria.Order criteria) {
-        List<ProductInfo> productInfoList = this.productService.getProductList(criteria.toGetProductListCommand());
+        List<ProductInfo> productInfoList = this.productService.getProductList(criteria.toGetProductListByIdCommand());
         OrderCommand.Order command = criteria.toCommand(productInfoList);
         OrderInfo orderInfo = orderService.place(command);
         pointService.use(new PointCommand.Use(criteria.userId(), orderInfo.totalPrice()));
