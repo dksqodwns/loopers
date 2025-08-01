@@ -19,10 +19,8 @@ public interface ProductV1ApiSpec {
 
     @Operation(summary = "상품 목록 조회")
     ApiResponse<ProductListResponse> getProductList(
-            @Parameter(description = "정렬 기준 필드")
-            SortField sort,
-            @Parameter(description = "정렬 순서")
-            SortOrder order,
+            @Parameter(description = "정렬 필드:기준")
+            String sort,
             @Parameter
             Pageable pageable
     );

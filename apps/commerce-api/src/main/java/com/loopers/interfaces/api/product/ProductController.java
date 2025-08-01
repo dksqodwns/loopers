@@ -26,9 +26,13 @@ public class ProductController implements ProductV1ApiSpec {
     @Override
     @GetMapping("")
     public ApiResponse<ProductListResponse> getProductList(
-            @RequestParam(defaultValue = "CREATED_AT") SortField field,
-            @RequestParam(defaultValue = "ASC") SortOrder order,
+            @RequestParam(defaultValue = "createdAt:desc") String sort,
             @PageableDefault(size = 10) Pageable pageable) {
+
+        String[] sortParams = sort.split(":");
+        SortField field = SortField.fromField(sortParams[0]);
+        SortOrder order = SortOrder.valueOf(sortParams[1].toUpperCase());
+
         ProductListInfo productList = productFacade.getProductList(ProductList.from(
                 field.getField(), order, pageable
         ));

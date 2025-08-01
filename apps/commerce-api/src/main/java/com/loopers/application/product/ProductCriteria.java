@@ -6,7 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-public record ProductCriteria {
+public record ProductCriteria() {
     public record ProductList(PageRequest pageRequest) {
         public static ProductList from(String filed, SortOrder sortOrder, Pageable pageable) {
             Sort.Direction direction = Sort.Direction.fromString(sortOrder.name());

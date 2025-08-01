@@ -43,7 +43,26 @@ public class ProductService {
     }
 
     public Page<ProductInfo> getProductList(ProductCommand.GetProductList command) {
-        return productRepository.findAll(command.pageRequest()).map(ProductInfo::from);
+        boolean sortByLikeCount = command.pageRequest().getSort().stream()
+                .anyMatch(order -> order.getProperty().equals("likeCount"));
+
+        if (sortByLikeCount) {
+            return productRepository.findAllWithLikeCount(command.pageRequest()).map(productWithLikeCount -> {
+                Product product = productWithLikeCount.getProduct();
+                Brand brand = brandRepository.findByBrandId(product.getBrandId())
+                        .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND,
+                                "브랜드를 찾을 수 없습니다. brandId: " + product.getBrandId()));
+                return ProductInfo.from(product, brand, productWithLikeCount.getLikeCount());
+            });
+        } else {
+            return productRepository.findAll(command.pageRequest()).map(product -> {
+                Brand brand = brandRepository.findByBrandId(product.getBrandId())
+                        .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND,
+                                "브랜드를 찾을 수 없습니다. brandId: " + product.getBrandId()));
+                Long likeCount = likeRepository.countByProductId(product.getId());
+                return ProductInfo.from(product, brand, likeCount);
+            });
+        }
     }
 
 
