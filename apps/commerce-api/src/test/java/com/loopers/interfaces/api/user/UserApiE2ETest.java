@@ -1,4 +1,4 @@
-package com.loopers.interfaces.api;
+package com.loopers.interfaces.api.user;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -8,8 +8,8 @@ import com.loopers.application.user.UserCommand.UserCreateCommand;
 import com.loopers.domain.user.Gender;
 import com.loopers.domain.user.User;
 import com.loopers.infrastructure.user.UserJpaRepository;
+import com.loopers.interfaces.api.ApiResponse;
 import com.loopers.interfaces.api.ApiResponse.Metadata.Result;
-import com.loopers.interfaces.api.user.UserDto;
 import com.loopers.interfaces.api.user.UserDto.UserCreateRequest;
 import com.loopers.interfaces.api.user.UserDto.UserResponse;
 import com.loopers.utils.DatabaseCleanUp;
@@ -68,7 +68,7 @@ class UserApiE2ETest {
 
             HttpEntity<UserDto.UserCreateRequest> requestEntity = new HttpEntity<>(request, headers);
 
-            ParameterizedTypeReference<ApiResponse<UserDto.UserResponse>> responseType = new ParameterizedTypeReference<>() {
+            ParameterizedTypeReference<ApiResponse<UserResponse>> responseType = new ParameterizedTypeReference<>() {
             };
 
             // when

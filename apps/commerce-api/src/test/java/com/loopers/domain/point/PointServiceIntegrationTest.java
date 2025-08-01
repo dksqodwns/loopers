@@ -3,7 +3,7 @@ package com.loopers.domain.point;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.loopers.application.point.PointCommand.ChargeCommand;
+import com.loopers.application.point.PointCommand;
 import com.loopers.application.user.UserCommand.UserCreateCommand;
 import com.loopers.domain.user.Gender;
 import com.loopers.domain.user.User;
@@ -45,7 +45,7 @@ public class PointServiceIntegrationTest {
             // given
             PointService pointService = new PointService(spyUserRepository, spyPointRepository);
 
-            ChargeCommand command = new ChargeCommand("non-exists-user-id", 1_000);
+            PointCommand.Charge command = new PointCommand.Charge("non-exists-user-id", 1_000);
 
             // when
             CoreException coreException = assertThrows(CoreException.class, () -> pointService.charge(command));
