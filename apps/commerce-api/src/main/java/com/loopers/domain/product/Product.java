@@ -1,6 +1,8 @@
 package com.loopers.domain.product;
 
 import com.loopers.domain.BaseEntity;
+import com.loopers.support.error.CoreException;
+import com.loopers.support.error.ErrorType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -28,6 +30,14 @@ public class Product extends BaseEntity {
     }
 
     public Product decreaseStock(Integer quantity) {
+        if (quantity <= 0) {
+            throw new CoreException(ErrorType.BAD_REQUEST, "재고 차감 수량은 0보다 커야 합니다.");
+        }
+
+        if (stock < quantity) {
+            throw new CoreException(ErrorType.BAD_REQUEST, "보유 재고가 부족합니다.");
+        }
+
         this.stock -= quantity;
         return this;
     }

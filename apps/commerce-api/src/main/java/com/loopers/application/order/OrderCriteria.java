@@ -1,6 +1,6 @@
 package com.loopers.application.order;
 
-import com.loopers.application.product.ProductCommand;
+import com.loopers.application.product.ProductCommand.GetProductListById;
 import com.loopers.application.product.ProductInfo;
 import java.util.List;
 import java.util.Map;
@@ -29,8 +29,8 @@ public record OrderCriteria() {
             return new OrderCommand.Order(userId, orderItmeList);
         }
 
-        public ProductCommand.GetProductList toGetProductListCommand() {
-            return new ProductCommand.GetProductList(getProductIdList());
+        public GetProductListById toGetProductListByIdCommand() {
+            return new GetProductListById(getProductIdList());
         }
 
         private List<Long> getProductIdList() {
