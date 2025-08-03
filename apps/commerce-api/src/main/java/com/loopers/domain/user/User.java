@@ -1,6 +1,5 @@
 package com.loopers.domain.user;
 
-import com.loopers.application.user.UserCommand.UserCreateCommand;
 import com.loopers.domain.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -11,32 +10,24 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "members")
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class User extends BaseEntity {
-    private String userId;
-    private String username;
+    private String loginId;
     private String email;
-    private Gender gender;
+    private String username;
     private LocalDate birthDate;
+    private Gender gender;
 
-    private User(String userId, String username, String email, Gender gender, LocalDate birthDate) {
-        UserValidator.validate(userId, email, gender);
-        this.userId = userId;
-        this.username = username;
+    public User(String loginId, String email, String username, String birthDate, String gender) {
+        UserValidator.validate(loginId, email, gender);
+        this.loginId = loginId;
         this.email = email;
-        this.gender = gender;
-        this.birthDate = birthDate;
+        this.username = username;
+        this.birthDate = LocalDate.parse(birthDate);
+        this.gender = Gender.valueOf(gender);
     }
-
-    public static User create(UserCreateCommand command) {
-        return new User(
-                command.userId(),
-                command.username(),
-                command.email(),
-                command.gender(),
-                command.birthDate()
-        );
-    }
-
 }
+
+
+
