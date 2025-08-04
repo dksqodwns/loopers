@@ -2,7 +2,12 @@ package com.loopers.interfaces.api.user;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.loopers.domain.user.BirthDate;
+import com.loopers.domain.user.Email;
+import com.loopers.domain.user.Gender;
+import com.loopers.domain.user.LoginId;
 import com.loopers.domain.user.User;
+import com.loopers.infrastructure.user.UserJpaRepository;
 import com.loopers.interfaces.api.ApiResponse;
 import com.loopers.interfaces.api.ApiResponse.Metadata.Result;
 import com.loopers.interfaces.api.user.UserDto.V1.RegisterRequest;
@@ -29,11 +34,13 @@ public class UserApiV1E2ETest {
 
     private final TestRestTemplate testRestTemplate;
     private final DatabaseCleanUp databaseCleanUp;
+    private final UserJpaRepository userJpaRepository;
 
     @Autowired
-    public UserApiV1E2ETest(TestRestTemplate testRestTemplate, DatabaseCleanUp databaseCleanUp) {
+    public UserApiV1E2ETest(TestRestTemplate testRestTemplate, DatabaseCleanUp databaseCleanUp, UserJpaRepository userJpaRepository) {
         this.testRestTemplate = testRestTemplate;
         this.databaseCleanUp = databaseCleanUp;
+        this.userJpaRepository = userJpaRepository;
     }
 
     @AfterEach
@@ -45,7 +52,7 @@ public class UserApiV1E2ETest {
     @Nested
     class Register {
 
-        @DisplayName("성공 할 경우, 생성된 유저 정보를 응답으로 반환한다.")
+        @DisplayName("성공 할 경우, 생성된 유저 정보를 반환한다.")
         @Test
         void returnUserResponse_whenSuccessRegister() {
             // given
@@ -67,9 +74,17 @@ public class UserApiV1E2ETest {
             );
         }
 
+    }
+
+    @DisplayName("유저가 개인정보를 조회 할 때,")
+    @Nested
+    class GetUser {
+
+        @DisplayName("성공 할 경우, 유저 정보를 반환한다.")
+        @Test
         void returnUserResponse_whenOwnInfo() {
             // given
-            final User user = new User("test", "test@test.com", "안병준", "1998-01-08", "MALE");
+            final User user = userJpaRepository.save(new User(new LoginId("test"), new Email("test@test.com"), "안병준", new BirthDate("1998-01-08"), Gender.from("MALE")));
             HttpHeaders headers = new HttpHeaders();
             headers.set("X-USER-ID", user.getId().toString());
             HttpEntity<Object> requestEntity = new HttpEntity<>(null, headers);
@@ -78,7 +93,7 @@ public class UserApiV1E2ETest {
             ParameterizedTypeReference<ApiResponse<UserResponse>> responseType = new ParameterizedTypeReference<>() {
             };
             ResponseEntity<ApiResponse<UserResponse>> response = testRestTemplate.exchange(
-                    END_POINT, HttpMethod.GET, requestEntity, responseType
+                    END_POINT + "/me", HttpMethod.GET, requestEntity, responseType
             );
 
             // then

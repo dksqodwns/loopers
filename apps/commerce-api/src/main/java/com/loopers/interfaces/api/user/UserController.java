@@ -1,5 +1,7 @@
 package com.loopers.interfaces.api.user;
 
+import com.loopers.application.user.UserFacade;
+import com.loopers.application.user.UserResult;
 import com.loopers.interfaces.api.ApiResponse;
 import com.loopers.interfaces.api.user.UserDto.V1.UserResponse;
 import lombok.RequiredArgsConstructor;
@@ -14,17 +16,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
 public class UserController implements UserV1ApiSpec {
+    private final UserFacade userFacade;
 
     @Override
     @PostMapping("")
     public ApiResponse<UserDto.V1.UserResponse> regitser(@RequestBody() final UserDto.V1.RegisterRequest request) {
-        return ApiResponse.success(new UserResponse(1L, "test", "test@test.com", "안병준", "1998-01-08", "m"));
+        UserResult userResult = userFacade.register(request.toCriteria());
+        UserResponse response = UserResponse.from(userResult);
+        return ApiResponse.success(response);
     }
 
     @Override
     @GetMapping("/me")
     public ApiResponse<UserDto.V1.UserResponse> getMyInfo(@RequestHeader("X-USER-ID") final Long userId) {
-        return ApiResponse.success(new UserResponse(1L, "test", "test@test.com", "안병준", "1998-01-08", "m"));
+        UserResult userResult = userFacade.getUser(userId);
+        UserResponse response = UserResponse.from(userResult);
+        return ApiResponse.success(response);
     }
-
 }
