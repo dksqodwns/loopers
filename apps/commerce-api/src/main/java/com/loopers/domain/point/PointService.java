@@ -17,8 +17,9 @@ public class PointService {
         if (pointRepository.existsByUserId(point.getUserId())) {
             throw new CoreException(ErrorType.CONFLICT, "유저의 포인트가 이미 존재합니다.");
         }
+        Point savedPoint = pointRepository.save(point);
 
-        return PointInfo.from(pointRepository.save(point));
+        return PointInfo.from(savedPoint);
     }
 
     public PointInfo getPoint(final Long userId) {

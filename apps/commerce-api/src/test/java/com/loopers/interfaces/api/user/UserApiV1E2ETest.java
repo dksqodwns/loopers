@@ -32,6 +32,7 @@ public class UserApiV1E2ETest {
 
     public static final String END_POINT = "/api/v1/users";
 
+
     private final TestRestTemplate testRestTemplate;
     private final DatabaseCleanUp databaseCleanUp;
     private final UserJpaRepository userJpaRepository;
@@ -42,6 +43,7 @@ public class UserApiV1E2ETest {
         this.databaseCleanUp = databaseCleanUp;
         this.userJpaRepository = userJpaRepository;
     }
+
 
     @AfterEach
     public void cleanUp() {
@@ -57,7 +59,8 @@ public class UserApiV1E2ETest {
         void returnUserResponse_whenSuccessRegister() {
             // given
             RegisterRequest request = new RegisterRequest("test", "test@test.com", "안병준", "1998-01-08", "MALE");
-            HttpEntity<RegisterRequest> requestEntity = new HttpEntity<>(request);
+
+            HttpEntity<RegisterRequest> requestEntity = new HttpEntity<>(request, null);
             ParameterizedTypeReference<ApiResponse<UserResponse>> responseType = new ParameterizedTypeReference<>() {
             };
 
@@ -65,6 +68,8 @@ public class UserApiV1E2ETest {
             ResponseEntity<ApiResponse<UserResponse>> response = testRestTemplate.exchange(
                     END_POINT, HttpMethod.POST, requestEntity, responseType
             );
+
+            System.out.println("response: " + response);
 
             // then
             Assertions.assertAll(
