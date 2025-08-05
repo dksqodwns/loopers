@@ -19,6 +19,6 @@ public class ProductStockRepositoryImpl implements ProductStockRepository {
 
     @Override
     public List<ProductStock> findAllByProductId(List<Long> productIds) {
-        return this.productStockJpaRepository.findAllByProductIds(productIds);
+        return this.productStockJpaRepository.findAllByProductIdIn(productIds);
     }
 }

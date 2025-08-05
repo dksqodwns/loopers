@@ -38,7 +38,13 @@ public class ProductCount extends BaseEntity {
 
     public void increase(final CountType countType) {
         switch (countType) {
-            case LIKE -> likeCount.
+            case LIKE -> likeCount.increase();
+        }
+    }
+
+    public void decrease(final CountType countType) {
+        switch (countType) {
+            case LIKE -> likeCount.decrease();
         }
     }
 
@@ -51,8 +57,31 @@ public class ProductCount extends BaseEntity {
         private Long count;
 
         public Count(Long count) {
+            if (count == null) {
+                throw new CoreException(ErrorType.BAD_REQUEST, "카운트는 NULL이 될 수 없습니다.");
+            }
+
+            if (count < 0) {
+                throw new CoreException(ErrorType.BAD_REQUEST, "카운트는 음수가 될 수 없습니다.");
+            }
+
             this.count = count;
         }
+
+        public void increase() {
+            this.count++;
+        }
+
+        public void decrease() {
+            if (this.count <= 0) {
+                throw new CoreException(ErrorType.BAD_REQUEST, "카운트를 감소 시킬 수 없습니다.");
+            }
+            this.count--;
+        }
+    }
+
+    public enum CountType {
+        LIKE,
     }
 }
 

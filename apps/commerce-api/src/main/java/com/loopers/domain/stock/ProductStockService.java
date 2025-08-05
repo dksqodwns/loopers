@@ -15,7 +15,7 @@ public class ProductStockService {
                 .map(ProductStockInfo::from);
     }
 
-    public List<ProductStockInfo> findStocks(final ProductStockCommand.GetStocks command) {
+    public List<ProductStockInfo> getStocks(final ProductStockCommand.GetStocks command) {
         return this.productStockRepository.findAllByProductId(command.productIds()).stream()
                 .map(ProductStockInfo::from)
                 .toList();

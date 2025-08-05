@@ -1,5 +1,16 @@
 package com.loopers.domain.product;
 
-public class ProductCommand {
+import java.util.List;
+import org.springframework.data.domain.PageRequest;
+
+public record ProductCommand() {
+    public record GetProduct(Long id) {
+    }
+
+    public record GetProducts(List<Long> ids) {
+    }
+
+    public record SerachProducts(Long brandId, PageRequest pageRequest) {
+    }
 
 }
