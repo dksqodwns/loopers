@@ -24,6 +24,9 @@ public class ProductStock extends BaseEntity {
         if (productId == null) {
             throw new CoreException(ErrorType.BAD_REQUEST, "상품 Id는 비어있을 수 없습니다.");
         }
+        if (stock == null) {
+            throw new CoreException(ErrorType.BAD_REQUEST, "재고 수량은 비어있을 수 없습니다.");
+        }
 
         this.productId = productId;
         this.stock = stock;

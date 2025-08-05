@@ -17,6 +17,7 @@ public class ProductCountService {
         final ProductCount productCount = productCountRepository.findByProductId(command.productId())
                 .orElseGet(() -> new ProductCount(command.productId()));
 
+        productCount.increase(command.countType());
         productCountRepository.save(productCount);
     }
 
