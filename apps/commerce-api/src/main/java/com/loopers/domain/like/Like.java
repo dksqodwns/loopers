@@ -27,6 +27,9 @@ public class Like extends BaseEntity {
         if (userId == null) {
             throw new CoreException(ErrorType.BAD_REQUEST, "유저 ID는 NULL이 될 수 없습니다.");
         }
+        if (likeTarget == null) {
+            throw new CoreException(ErrorType.BAD_REQUEST, "좋아요 대상은 NULL이 될 수 없습니다.");
+        }
 
         this.userId = userId;
         this.likeTarget = likeTarget;

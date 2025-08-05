@@ -25,6 +25,9 @@ public class LikeTarget {
         if (id == null) {
             throw new CoreException(ErrorType.BAD_REQUEST, "타겟의 ID는 NULL이 될 수 없습니다.");
         }
+        if (targetType == null) {
+            throw new CoreException(ErrorType.BAD_REQUEST, "타겟의 타입은 NULL이 될 수 없습니다.");
+        }
 
         this.targetType = targetType;
         this.id = id;
