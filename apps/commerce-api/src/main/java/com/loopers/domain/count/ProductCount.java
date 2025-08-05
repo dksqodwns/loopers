@@ -1,6 +1,8 @@
 package com.loopers.domain.count;
 
 import com.loopers.domain.BaseEntity;
+import com.loopers.support.error.CoreException;
+import com.loopers.support.error.ErrorType;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -25,6 +27,20 @@ public class ProductCount extends BaseEntity {
     @Embedded
     private Count likeCount;
 
+    public ProductCount(Long productId) {
+        if (productId == null) {
+            throw new CoreException(ErrorType.BAD_REQUEST, "상품 ID는 비어있을 수 없습니다.");
+        }
+
+        this.productId = productId;
+        this.likeCount = new Count(0L);
+    }
+
+    public void increase(final CountType countType) {
+        switch (countType) {
+            case LIKE -> likeCount.
+        }
+    }
 
     @Getter
     @EqualsAndHashCode
@@ -34,6 +50,9 @@ public class ProductCount extends BaseEntity {
 
         private Long count;
 
+        public Count(Long count) {
+            this.count = count;
+        }
     }
 }
 
