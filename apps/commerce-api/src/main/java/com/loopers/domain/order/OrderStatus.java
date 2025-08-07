@@ -1,4 +1,8 @@
 package com.loopers.domain.order;
 
-public class OrderStatus {
+
+public enum OrderStatus {
+    PENDING,
+    CONFIRM,
+    CANCELED
 }

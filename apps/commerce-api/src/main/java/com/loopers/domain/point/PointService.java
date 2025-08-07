@@ -38,4 +38,12 @@ public class PointService {
         return PointInfo.from(point);
     }
 
+    public PointInfo use(final PointCommand.Use command) {
+        Point point = pointRepository.findByUserId(command.userId())
+                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND, "유저가 존재하지 않습니다."));
+
+        point.use(command.amount());
+        return PointInfo.from(point);
+    }
+
 }

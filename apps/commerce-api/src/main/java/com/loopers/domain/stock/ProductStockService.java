@@ -1,5 +1,8 @@
 package com.loopers.domain.stock;
 
+import com.loopers.support.error.CoreException;
+import com.loopers.support.error.ErrorType;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -19,5 +22,13 @@ public class ProductStockService {
         return this.productStockRepository.findAllByProductId(command.productIds()).stream()
                 .map(ProductStockInfo::from)
                 .toList();
+    }
+
+    @Transactional
+    public void decrease(final ProductStockCommand.Decrease command) {
+        ProductStock productStock = productStockRepository.findByProductId(command.productId())
+                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND, "상품의 재고가 아예 없습니다. productId: " + command.productId()));
+
+        productStock.decrease(command.quantity());
     }
 }

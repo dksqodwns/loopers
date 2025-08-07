@@ -29,4 +29,11 @@ public class Amount {
         }
         this.amount += amount;
     }
+
+    public void use(final Long amount) {
+        if (this.amount < amount) {
+            throw new CoreException(ErrorType.BAD_REQUEST, "보유한 포인트가 부족합니다.");
+        }
+        this.amount -= amount;
+    }
 }
