@@ -2,7 +2,9 @@ package com.loopers.application.order;
 
 import com.loopers.domain.order.OrderInfo;
 import com.loopers.domain.order.OrderService;
-import com.loopers.domain.point.PointCommand.Use;
+import com.loopers.domain.payment.Payment;
+import com.loopers.domain.payment.PaymentService;
+import com.loopers.domain.payment.PaymentType;
 import com.loopers.domain.point.PointService;
 import com.loopers.domain.product.ProductCommand.GetProducts;
 import com.loopers.domain.product.ProductInfo;
@@ -22,17 +24,18 @@ public class OrderFacade {
     private final ProductService productService;
     private final PointService pointService;
     private final ProductStockService productStockService;
+    private final PaymentService paymentService;
 
     @Transactional
     public void order(final OrderCriteria.Order criteria) {
         final List<ProductInfo> productInfos = productService.getProducts(criteria.toProductCommand());
         final OrderInfo orderInfo = orderService.order(criteria.toCommand(productInfos));
 
-        pointService.use(new Use(criteria.userId(), orderInfo.totalPrice()));
-
         orderInfo.orderItems().forEach(orderItem ->
                 productStockService.decrease(new ProductStockCommand.Decrease(orderItem.productId(), orderItem.quantity()))
         );
+        Payment payment = paymentService.request(orderInfo.id(), orderInfo.userId(), orderInfo.totalPrice(), PaymentType.POINT);
+        paymentService.pay(payment);
     }
 
     @Transactional(readOnly = true)

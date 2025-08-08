@@ -55,4 +55,14 @@ public class Order extends BaseEntity {
                 .map(OrderItem::calculateTotalPrice)
                 .reduce(0L, Long::sum);
     }
+
+    public Order cancel() {
+        this.status = OrderStatus.CANCELED;
+        return this;
+    }
+
+    public Order confirm() {
+        this.status = OrderStatus.CONFIRM;
+        return this;
+    }
 }

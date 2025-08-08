@@ -1,4 +1,7 @@
 package com.loopers.domain.payment;
 
-public class PaymentMethod {
+public interface PaymentMethod {
+    PaymentType getType();
+
+    void pay(Payment payment);
 }

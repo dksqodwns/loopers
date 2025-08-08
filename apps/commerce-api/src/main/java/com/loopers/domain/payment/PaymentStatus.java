@@ -1,4 +1,8 @@
 package com.loopers.domain.payment;
 
-public class PaymentStatus {
+
+public enum PaymentStatus {
+    REQUSETED,
+    COMPLETED,
+    FAILED
 }

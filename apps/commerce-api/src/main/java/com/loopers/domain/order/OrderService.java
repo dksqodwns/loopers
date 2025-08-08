@@ -19,6 +19,7 @@ public class OrderService {
                 .map(orderItem -> new OrderItem(orderItem.productId(), orderItem.price(), orderItem.quantity()))
                 .toList();
         final Order order = new Order(command.userId(), orderItems);
+        order.confirm();
         final Order savedOrder = orderRepository.save(order);
         return OrderInfo.from(savedOrder);
     }
