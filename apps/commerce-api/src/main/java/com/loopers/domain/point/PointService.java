@@ -22,6 +22,7 @@ public class PointService {
         return PointInfo.from(savedPoint);
     }
 
+    @Transactional(readOnly = true)
     public PointInfo getPoint(final Long userId) {
         return pointRepository.findByUserId(userId)
                 .map(PointInfo::from)
@@ -38,6 +39,9 @@ public class PointService {
         return PointInfo.from(point);
     }
 
+
+
+    @Transactional
     public PointInfo use(final PointCommand.Use command) {
         Point point = pointRepository.findByUserId(command.userId())
                 .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND, "유저가 존재하지 않습니다."));

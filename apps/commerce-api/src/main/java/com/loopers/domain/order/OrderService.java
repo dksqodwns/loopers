@@ -2,10 +2,10 @@ package com.loopers.domain.order;
 
 import com.loopers.support.error.CoreException;
 import com.loopers.support.error.ErrorType;
-import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -30,6 +30,7 @@ public class OrderService {
                         "해당하는 주문을 찾을 수 없습니다. userId: " + command.userId() + ", orderId: " + command.orderId()));
     }
 
+    @Transactional(readOnly = true)
     public List<OrderInfo> getOrders(final OrderCommand.GetOrders command) {
         return orderRepository.findAllByUserId(command.userId()).stream()
                 .map(OrderInfo::from)

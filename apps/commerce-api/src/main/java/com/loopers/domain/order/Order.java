@@ -41,14 +41,13 @@ public class Order extends BaseEntity {
         }
 
         this.userId = userId;
-        this.items = items;
         this.status = OrderStatus.PENDING;
         items.forEach(this::addOrderItem);
     }
 
     public void addOrderItem(final OrderItem item) {
-        items.add(item);
-        item.initOrder(Order.this);
+        this.items.add(item);
+        item.initOrder(this);
     }
 
     public Long calculateTotalPrice() {

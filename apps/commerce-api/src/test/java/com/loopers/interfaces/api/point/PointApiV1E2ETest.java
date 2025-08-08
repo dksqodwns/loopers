@@ -1,14 +1,20 @@
 package com.loopers.interfaces.api.point;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import com.loopers.domain.point.Amount;
+import com.loopers.domain.point.Point;
 import com.loopers.domain.user.BirthDate;
 import com.loopers.domain.user.Email;
 import com.loopers.domain.user.Gender;
 import com.loopers.domain.user.LoginId;
 import com.loopers.domain.user.User;
+import com.loopers.infrastructure.point.PointJpaRepository;
 import com.loopers.infrastructure.user.UserJpaRepository;
 import com.loopers.interfaces.api.ApiResponse;
 import com.loopers.utils.DatabaseCleanUp;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -28,13 +34,15 @@ public class PointApiV1E2ETest {
     private TestRestTemplate testRestTemplate;
     private UserJpaRepository userJpaRepository;
     private DatabaseCleanUp databaseCleanUp;
+    private PointJpaRepository pointJpaRepository;
 
 
     @Autowired
-    public PointApiV1E2ETest(TestRestTemplate testRestTemplate, DatabaseCleanUp databaseCleanUp, UserJpaRepository userJpaRepository) {
+    public PointApiV1E2ETest(TestRestTemplate testRestTemplate, DatabaseCleanUp databaseCleanUp, UserJpaRepository userJpaRepository, PointJpaRepository pointJpaRepository) {
         this.testRestTemplate = testRestTemplate;
         this.databaseCleanUp = databaseCleanUp;
         this.userJpaRepository = userJpaRepository;
+        this.pointJpaRepository = pointJpaRepository;
     }
 
     @AfterEach
@@ -49,6 +57,8 @@ public class PointApiV1E2ETest {
         @Test
         void returnSuccess_whenChargeSuccessful() {
             User user = userJpaRepository.save(new User(new LoginId("test"), new Email("test@test.com"), "안병준", new BirthDate("1998-01-08"), Gender.from("MALE")));
+            pointJpaRepository.save(new Point(user.getId(), new Amount(0L)));
+            pointJpaRepository.flush();
             HttpHeaders headers = new HttpHeaders();
             headers.set("X-USER-ID", user.getId().toString());
             PointDto.V1.ChargeRequest request = new PointDto.V1.ChargeRequest(100L);
@@ -60,6 +70,12 @@ public class PointApiV1E2ETest {
 
             ResponseEntity<ApiResponse<PointDto.V1.PointResponse>> response = testRestTemplate.exchange(END_POINT + "/charge", HttpMethod.POST, requestEntity, responseType);
 
+            Assertions.assertAll(
+                    () -> assertThat(response.getStatusCode().is2xxSuccessful()).isTrue(),
+                    () -> assertThat(response.getBody().meta().result()).isEqualTo(
+                            ApiResponse.Metadata.Result.SUCCESS
+                    )
+            );
         }
     }
 
@@ -70,6 +86,8 @@ public class PointApiV1E2ETest {
         @Test
         void returnPointInfo_whenGetPointSuccessful() {
             User user = userJpaRepository.save(new User(new LoginId("test"), new Email("test@test.com"), "안병준", new BirthDate("1998-01-08"), Gender.from("MALE")));
+            pointJpaRepository.save(new Point(user.getId(), new Amount(0L)));
+            pointJpaRepository.flush();
             HttpHeaders headers = new HttpHeaders();
             headers.set("X-USER-ID", user.getId().toString());
             HttpEntity<Object> requestEntity = new HttpEntity<>(null, headers);
@@ -77,7 +95,14 @@ public class PointApiV1E2ETest {
             ParameterizedTypeReference<ApiResponse<PointDto.V1.PointResponse>> responseType = new ParameterizedTypeReference<>() {
             };
 
-            ResponseEntity<ApiResponse<PointDto.V1.PointResponse>> response = testRestTemplate.exchange(END_POINT + "/charge", HttpMethod.POST, requestEntity, responseType);
+            ResponseEntity<ApiResponse<PointDto.V1.PointResponse>> response = testRestTemplate.exchange(END_POINT, HttpMethod.GET, requestEntity, responseType);
+
+            Assertions.assertAll(
+                    () -> assertThat(response.getStatusCode().is2xxSuccessful()).isTrue(),
+                    () -> assertThat(response.getBody().meta().result()).isEqualTo(
+                            ApiResponse.Metadata.Result.SUCCESS
+                    )
+            );
         }
     }
 }

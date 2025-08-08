@@ -12,6 +12,7 @@ import com.loopers.domain.stock.ProductStockService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -22,6 +23,7 @@ public class OrderFacade {
     private final PointService pointService;
     private final ProductStockService productStockService;
 
+    @Transactional
     public void order(final OrderCriteria.Order criteria) {
         final List<ProductInfo> productInfos = productService.getProducts(criteria.toProductCommand());
         final OrderInfo orderInfo = orderService.order(criteria.toCommand(productInfos));
@@ -33,6 +35,7 @@ public class OrderFacade {
         );
     }
 
+    @Transactional(readOnly = true)
     public OrderResult getOrder(final OrderCriteria.GetOrder criteria) {
         OrderInfo orderInfo = orderService.getOrder(criteria.toCommand());
         List<ProductInfo> productInfos = productService.getProducts(new GetProducts(orderInfo.getProductIds()));
