@@ -30,16 +30,11 @@ public class PaymentService {
         return paymentRepository.save(payment);
     }
 
-    @Transactional
+        @Transactional
     public void pay(Payment payment) {
         PaymentMethod paymentMethod = paymentMethods.get(payment.getPaymentType());
-
-        try {
-            paymentMethod.pay(payment);
-            payment.complete();
-        } catch (Exception e) {
-            payment.cancel();
-        }
+        paymentMethod.pay(payment);
+        payment.complete();
     }
 
 

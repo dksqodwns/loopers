@@ -56,13 +56,15 @@ public class Order extends BaseEntity {
                 .reduce(0L, Long::sum);
     }
 
-    public Order cancel() {
+    public void cancel() {
         this.status = OrderStatus.CANCELED;
-        return this;
     }
 
-    public Order confirm() {
+    public void confirm() {
         this.status = OrderStatus.CONFIRM;
-        return this;
+    }
+
+    public void complete() {
+        this.status = OrderStatus.COMPLETED;
     }
 }

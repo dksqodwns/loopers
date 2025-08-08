@@ -30,6 +30,7 @@ public class UserService {
         return UserInfo.from(userRepository.save(user));
     }
 
+    @Transactional(readOnly = true)
     public UserInfo getUser(final Long id) {
         return userRepository.findByid(id)
                 .map(UserInfo::from)

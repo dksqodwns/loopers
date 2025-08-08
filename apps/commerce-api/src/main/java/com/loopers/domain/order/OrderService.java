@@ -19,7 +19,6 @@ public class OrderService {
                 .map(orderItem -> new OrderItem(orderItem.productId(), orderItem.price(), orderItem.quantity()))
                 .toList();
         final Order order = new Order(command.userId(), orderItems);
-        order.confirm();
         final Order savedOrder = orderRepository.save(order);
         return OrderInfo.from(savedOrder);
     }
@@ -38,5 +37,17 @@ public class OrderService {
                 .toList();
     }
 
+    @Transactional
+    public void confirmOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND, "주문을 찾을 수 없습니다. orderId: " + orderId));
+        order.confirm();
+    }
 
+    @Transactional
+    public void completeOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND, "주문을 찾을 수 없습니다. orderId: " + orderId));
+        order.complete();
+    }
 }

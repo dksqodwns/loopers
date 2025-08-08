@@ -39,8 +39,6 @@ public class PointService {
         return PointInfo.from(point);
     }
 
-
-
     @Transactional
     public PointInfo use(final PointCommand.Use command) {
         Point point = pointRepository.findByUserId(command.userId())

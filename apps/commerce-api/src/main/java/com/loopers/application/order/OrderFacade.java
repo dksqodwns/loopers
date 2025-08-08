@@ -34,8 +34,12 @@ public class OrderFacade {
         orderInfo.orderItems().forEach(orderItem ->
                 productStockService.decrease(new ProductStockCommand.Decrease(orderItem.productId(), orderItem.quantity()))
         );
+
         Payment payment = paymentService.request(orderInfo.id(), orderInfo.userId(), orderInfo.totalPrice(), PaymentType.POINT);
+
+        orderService.confirmOrder(orderInfo.id());
         paymentService.pay(payment);
+        orderService.completeOrder(orderInfo.id());
     }
 
     @Transactional(readOnly = true)

@@ -53,15 +53,14 @@ public class Payment extends BaseEntity {
         this.totalPrice = totalPrice;
         this.status = PaymentStatus.REQUSETED;
         this.paymentType = paymentType;
+        this.userId = userId;
     }
 
-    public Payment complete() {
+    public void complete() {
         this.status = PaymentStatus.COMPLETED;
-        return this;
     }
 
-    public Payment cancel() {
+    public void cancel() {
         this.status = PaymentStatus.FAILED;
-        return this;
     }
 }

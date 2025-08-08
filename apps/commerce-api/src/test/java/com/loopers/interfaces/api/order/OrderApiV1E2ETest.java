@@ -123,6 +123,8 @@ public class OrderApiV1E2ETest {
 
             HttpHeaders headers = new HttpHeaders();
             headers.set("X-USER-ID", user.getId().toString());
+            System.out.println("id: "+user.getId());
+            System.out.println("hdears: "+headers.get("X-USER-ID"));
 
             OrderItemRequest orderItemRequest1 = new OrderItemRequest(product1.getId(), 1);
             OrderItemRequest orderItemRequest2 = new OrderItemRequest(product2.getId(), 2);
@@ -140,6 +142,9 @@ public class OrderApiV1E2ETest {
             ResponseEntity<ApiResponse<Object>> response = testRestTemplate.exchange(
                     END_POINT, HttpMethod.POST, request, responseType
             );
+
+            System.out.println("Response Status Code: " + response.getStatusCode());
+            System.out.println("Response Body: " + response.getBody());
 
             Assertions.assertAll(
                     () -> assertThat(response.getStatusCode().is2xxSuccessful()).isTrue(),
