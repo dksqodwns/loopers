@@ -31,21 +31,17 @@ public class PointService {
 
     @Transactional
     public PointInfo charge(final PointCommand.Charge command) {
-        final Point point = pointRepository.findByUserId(command.userId())
-                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND,
-                        "해당하는 포인트를 찾을 수 없습니다. userId: " + command.userId()));
+        Point point = pointRepository.findByUserIdForUpdate(command.userId())
+                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND, "해당하는 포인트를 찾을 수 없습니다. userId: " + command.userId()));
         point.charge(command.amount());
-
         return PointInfo.from(point);
     }
 
     @Transactional
     public PointInfo use(final PointCommand.Use command) {
-        Point point = pointRepository.findByUserId(command.userId())
+        Point point = pointRepository.findByUserIdForUpdate(command.userId())
                 .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND, "유저가 존재하지 않습니다."));
-
         point.use(command.amount());
         return PointInfo.from(point);
     }
-
 }

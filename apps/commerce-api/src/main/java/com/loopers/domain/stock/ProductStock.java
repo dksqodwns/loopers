@@ -6,13 +6,20 @@ import com.loopers.support.error.ErrorType;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "product_stock")
+@Table(
+        name = "product_stock",
+        uniqueConstraints = @UniqueConstraint(
+                name = "ux_product_stock_product_id",
+                columnNames = "product_id"
+        )
+)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProductStock extends BaseEntity {
     private Long productId;
