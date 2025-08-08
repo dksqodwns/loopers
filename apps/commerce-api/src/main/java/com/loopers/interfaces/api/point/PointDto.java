@@ -1,26 +1,24 @@
 package com.loopers.interfaces.api.point;
 
-import com.loopers.application.point.PointCommand.ChargeCommand;
-import com.loopers.application.point.PointInfo;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
+import com.loopers.application.point.PointCriteria;
+import com.loopers.application.point.PointResult;
 
-public class PointDto {
-    public record PointResponse(int point) {
-        public static PointResponse from(PointInfo pointInfo) {
-            return new PointResponse(
-                    pointInfo.point()
-            );
+public record PointDto() {
+
+    public record V1() {
+
+        public record ChargeRequest(Long amount) {
+            public PointCriteria.Charge toCriteira(Long userId) {
+                return new PointCriteria.Charge(userId, amount);
+            }
         }
+
+        public record PointResponse(Long id, Long userId, Long amount) {
+            public static PointResponse from(final PointResult pointResult) {
+                return new PointResponse(pointResult.id(), pointResult.userId(), pointResult.amount());
+            }
+        }
+
     }
 
-    public record PointChargeRequest(
-            @NotNull(message = "충전 포인트는 비어 있을 수 없습니다.")
-            @PositiveOrZero
-            int point
-    ) {
-        public ChargeCommand toCommand(String userId) {
-            return new ChargeCommand(userId, point);
-        }
-    }
 }

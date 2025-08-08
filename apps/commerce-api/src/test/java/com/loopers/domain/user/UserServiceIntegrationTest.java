@@ -1,132 +1,105 @@
 package com.loopers.domain.user;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
-import com.loopers.application.user.UserCommand.UserCreateCommand;
+import com.loopers.domain.user.UserCommand.Register;
+import com.loopers.infrastructure.user.UserJpaRepository;
 import com.loopers.support.error.CoreException;
 import com.loopers.support.error.ErrorType;
 import com.loopers.utils.DatabaseCleanUp;
-import java.time.LocalDate;
-import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 @SpringBootTest
 public class UserServiceIntegrationTest {
+
     @MockitoSpyBean
-    private UserRepository spyUserRepository;
+    private UserJpaRepository userJpaRepository;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private DatabaseCleanUp databaseCleanUp;
 
-    String userId;
-    String username;
-    String email;
-    Gender gender;
-    LocalDate birthDate;
-
-    @BeforeEach
-    void init() {
-        userId = "test";
-        username = "테스터";
-        email = "test@test.com";
-        gender = Gender.MALE;
-        birthDate = LocalDate.now().minusDays(1);
-    }
 
     @AfterEach
-    public void cleanUp() {
+    void cleanUp() {
         this.databaseCleanUp.truncateAllTables();
     }
 
-    @DisplayName("회원가입 시,")
+    @DisplayName("유저를 생성 할 때,")
     @Nested
-    class Post {
-        @DisplayName("유저 저장이 수행된다.")
+    class Create {
+        @DisplayName("이미 존재하는 LoginId면, 409 Conflict를 반환 한다.")
         @Test
-        void createUser_whenRegisterUser() {
-            // given
-            UserService userService = new UserService(spyUserRepository);
-            UserCreateCommand command = new UserCreateCommand(
-                    userId, username, email, gender, birthDate
-            );
+        void return409Conflict_whenExistsLoginId() {
+            User user = new User(new LoginId("test"), new Email("test@test.com"), "테스터", new BirthDate("1998-01-08"), Gender.from("MALE"));
+            userJpaRepository.save(user);
 
-            // when
-            userService.createUser(command);
+            CoreException coreException = Assertions.assertThrows(CoreException.class, () -> userService.register(new Register("test", "test2@test.com", "테스터", "1998-01-08", "MALE")));
 
-            // then
-            Mockito.verify(spyUserRepository).save(any(User.class));
+            assertThat(coreException.getErrorType()).isEqualTo(ErrorType.CONFLICT);
         }
 
-        @DisplayName("중복된 유저 ID로 가입 시, 저장이 실패한다.")
+        @DisplayName("이미 존재하는 Email이면, 409 Conflict를 반환 한다.")
         @Test
-        void fail_whenRegisterExistsUserId() {
-            // given
-            UserService userService = new UserService(spyUserRepository);
-            UserCreateCommand command = new UserCreateCommand(
-                    userId, username, email, gender, birthDate
-            );
-            userService.createUser(command);
+        void return409Conflict_whenExistsEmail() {
 
-            String existsUserId = "test";
-            UserCreateCommand existsCommand = new UserCreateCommand(
-                    existsUserId, username, email, gender, birthDate
-            );
+            User user = new User(new LoginId("test"), new Email("test@test.com"), "테스터", new BirthDate("1998-01-08"), Gender.from("MALE"));
+            userJpaRepository.save(user);
 
-            // when
-            CoreException userIdConflictException = assertThrows(CoreException.class,
-                    () -> userService.createUser(existsCommand));
+            CoreException coreException = Assertions.assertThrows(CoreException.class, () -> userService.register(new Register("test2", "test@test.com", "테스터", "1998-01-08", "MALE")));
 
-            // then
-            assertThat(userIdConflictException.getErrorType()).isEqualTo(ErrorType.CONFLICT);
+            assertThat(coreException.getErrorType()).isEqualTo(ErrorType.CONFLICT);
+        }
+
+        @DisplayName("새로운 LoginId, Email일 경우, 유저를 생성한다.")
+        @Test
+        void createUser() {
+            userService.register(new Register("test2", "test@test.com", "테스터", "1998-01-08", "MALE"));
+
+            verify(userJpaRepository, times(1)).save(any());
         }
     }
 
-    @DisplayName("유저 정보 조회 시")
+
+    @DisplayName("유저 정보를 조회 할 때,")
     @Nested
     class Get {
-        @DisplayName("해당 ID의 회원이 존재 할 경우, 회원 정보가 반환 된다.")
+        @DisplayName("존재하지 않는 id일 경우, 404 Not Found를 반환한다.")
         @Test
-        void getUser_whenUserExists() {
-            // given
-            UserService userService = new UserService(spyUserRepository);
-            UserCreateCommand command = new UserCreateCommand(
-                    userId, username, email, gender, birthDate
-            );
-            User savedUser = userService.createUser(command);
+        void returnNotFound_whenNotExistsUesr() {
+            CoreException coreException = Assertions.assertThrows(CoreException.class, () -> userService.getUser(777L));
 
-            // when
-            Optional<User> findUser = userService.getUserByUserId(userId);
-
-            // then
-            assertAll(
-                    () -> assertThat(findUser).isNotNull(),
-                    () -> assertThat(userId).isEqualTo(findUser.get().getUserId()),
-                    () -> assertThat(savedUser.getUserId()).isEqualTo(findUser.get().getUserId())
-            );
+            assertThat(coreException.getErrorType()).isEqualTo(ErrorType.NOT_FOUND);
         }
 
-        @DisplayName("해당 ID의 회원이 존재하지 않을 경우, null이 반환 된다.")
+        @DisplayName("존재하지 유저일 경우, 유저 정보를 반환한다.")
         @Test
-        void getNull_whenUserNotExists() {
-            // given
-            UserService userService = new UserService(spyUserRepository);
+        void returnUser_whenUserExists() {
 
-            // when
-            Optional<User> findUser = userService.getUserByUserId("non-exists-user-id");
+            User user = new User(new LoginId("test"), new Email("test@test.com"), "테스터", new BirthDate("1998-01-08"), Gender.from("MALE"));
 
-            // then
-            assertThat(findUser).isEmpty();
+            User savedUser = userJpaRepository.save(user);
+
+            Assertions.assertAll(
+                    () -> assertThat(userService.getUser(1L)).isNotNull(),
+                    () -> assertThat(userService.getUser(1L).id()).isEqualTo(savedUser.getId()),
+                    () -> assertThat(userService.getUser(1L).email()).isEqualTo(savedUser.getEmail()),
+                    () -> assertThat(userService.getUser(1L).username()).isEqualTo(savedUser.getUsername())
+            );
+
+
         }
     }
 }

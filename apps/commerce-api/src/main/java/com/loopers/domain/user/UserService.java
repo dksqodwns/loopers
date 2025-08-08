@@ -1,38 +1,40 @@
 package com.loopers.domain.user;
 
-import com.loopers.application.user.UserCommand.UserCreateCommand;
 import com.loopers.support.error.CoreException;
 import com.loopers.support.error.ErrorType;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
-@Component
+@Service
 public class UserService {
     private final UserRepository userRepository;
 
-    private void validateUserCreated(UserCreateCommand command) {
-        if (this.userRepository.existsByUserId(command.userId())) {
-            throw new CoreException(ErrorType.CONFLICT, "이미 존재하는 아이디 입니다.");
-        }
-
-        if (this.userRepository.existsByEmail(command.email())) {
-            throw new CoreException(ErrorType.CONFLICT, "이미 존재하는 이메일 입니다.");
-        }
-    }
-
     @Transactional
-    public User createUser(UserCreateCommand command) {
-        this.validateUserCreated(command);
-        User user = User.create(command);
-        return this.userRepository.save(user);
+    public UserInfo register(final UserCommand.Register command) {
+        User user = new User(
+                new LoginId(command.loginId()),
+                new Email(command.email()),
+                command.username(),
+                new BirthDate(command.birthDate()),
+                Gender.from(command.gender())
+        );
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            throw new CoreException(ErrorType.CONFLICT, "이미 존재하는 이메일 입니다. email=" + command.email());
+        }
+        if (userRepository.findByLoginId(user.getLoginId()).isPresent()) {
+            throw new CoreException(ErrorType.CONFLICT, "이미 존재하는 아이디 입니다. loginId=" + command.loginId());
+        }
+
+        return UserInfo.from(userRepository.save(user));
     }
 
     @Transactional(readOnly = true)
-    public Optional<User> getUserByUserId(String userId) {
-        return this.userRepository.findByUserId(userId);
+    public UserInfo getUser(final Long id) {
+        return userRepository.findByid(id)
+                .map(UserInfo::from)
+                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND, "해당하는 유저를 찾을 수 없습니다. id=" + id));
     }
 
 }

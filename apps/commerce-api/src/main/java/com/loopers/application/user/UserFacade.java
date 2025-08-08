@@ -1,28 +1,28 @@
 package com.loopers.application.user;
 
+import com.loopers.domain.point.PointCommand;
 import com.loopers.domain.point.PointService;
-import com.loopers.domain.user.User;
+import com.loopers.domain.user.UserInfo;
 import com.loopers.domain.user.UserService;
-import com.loopers.support.error.CoreException;
-import com.loopers.support.error.ErrorType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
-@Component
+@Service
 public class UserFacade {
     private final UserService userService;
     private final PointService pointService;
 
-    public UserInfo createUser(UserCommand.UserCreateCommand command) {
-        User user = userService.createUser(command);
-        return UserInfo.from(user);
+    public UserResult register(UserCriteria.Register criteria) {
+        final UserInfo userInfo = this.userService.register(criteria.toCommand());
+        pointService.create(new PointCommand.Create(userInfo.id(), 0L));
+
+        return UserResult.from(userInfo);
     }
 
-    public UserInfo getUser(String userId) {
-        return userService.getUserByUserId(userId)
-                .map(UserInfo::from)
-                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND, "유저를 찾을 수 없습니다."));
+    public UserResult getUser(Long userId) {
+        final UserInfo userInfo = this.userService.getUser(userId);
+        return UserResult.from(userInfo);
     }
 
 }

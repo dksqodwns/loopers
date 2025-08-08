@@ -1,42 +1,54 @@
 package com.loopers.domain.user;
 
-import com.loopers.application.user.UserCommand.UserCreateCommand;
 import com.loopers.domain.BaseEntity;
+import com.loopers.support.error.CoreException;
+import com.loopers.support.error.ErrorType;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
-import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "members")
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class User extends BaseEntity {
-    private String userId;
+    @Embedded
+    private LoginId loginId;
+
+    @Embedded
+    private Email email;
+
     private String username;
-    private String email;
+
+    @Embedded
+    private BirthDate birthDate;
+
+    @Enumerated(EnumType.STRING)
     private Gender gender;
-    private LocalDate birthDate;
 
-    private User(String userId, String username, String email, Gender gender, LocalDate birthDate) {
-        UserValidator.validate(userId, email, gender);
-        this.userId = userId;
-        this.username = username;
+    public User(
+            final LoginId loginId,
+            final Email email,
+            String username,
+            final BirthDate birthDate,
+            final Gender gender
+    ) {
+        if (gender == null) {
+            throw new CoreException(ErrorType.BAD_REQUEST, "성별은 비어있을 수 없습니다.");
+        }
+
+        this.loginId = loginId;
         this.email = email;
-        this.gender = gender;
+        this.username = username;
         this.birthDate = birthDate;
+        this.gender = gender;
     }
-
-    public static User create(UserCreateCommand command) {
-        return new User(
-                command.userId(),
-                command.username(),
-                command.email(),
-                command.gender(),
-                command.birthDate()
-        );
-    }
-
 }
+
+
+

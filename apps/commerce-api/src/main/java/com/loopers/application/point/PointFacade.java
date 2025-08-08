@@ -1,36 +1,29 @@
 package com.loopers.application.point;
 
-import com.loopers.application.point.PointCommand.ChargeCommand;
-import com.loopers.domain.point.Point;
+import com.loopers.domain.point.PointInfo;
 import com.loopers.domain.point.PointService;
 import com.loopers.domain.user.UserService;
-import com.loopers.support.error.CoreException;
-import com.loopers.support.error.ErrorType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
-@Component
+@Service
 public class PointFacade {
+
     private final UserService userService;
     private final PointService pointService;
 
-    public PointInfo chargePoint(ChargeCommand command) {
-        Point chargedPoint = pointService.charge(command);
-        return PointInfo.from(chargedPoint);
+    @Transactional
+    public PointResult charge(PointCriteria.Charge criteria) {
+        PointInfo chargedPoint = pointService.charge(criteria.toCommand());
+        return PointResult.from(chargedPoint);
     }
 
-    public PointInfo getPoints(String userId) {
-        Point point;
-
-        userService.getUserByUserId(userId)
-                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND, "유저를 찾을 수 없습니다."));
-
-        point = pointService.getPoints(userId);
-        if (point == null) {
-            point = Point.create(userId);
-        }
-
-        return PointInfo.from(point);
+    @Transactional(readOnly = true)
+    public PointResult getPoint(Long userId) {
+        PointInfo pointInfo = pointService.getPoint(userId);
+        return PointResult.from(pointInfo);
     }
+
 }
