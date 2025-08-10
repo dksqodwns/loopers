@@ -27,8 +27,9 @@ public class ProductStockService {
 
     @Transactional
     public void decrease(final ProductStockCommand.Decrease command) {
-        ProductStock productStock = productStockRepository.findByProductId(command.productId())
-                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND, "상품의 재고가 아예 없습니다. productId: " + command.productId()));
+        ProductStock productStock = productStockRepository.findByProductIdForUpdate(command.productId())
+                .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND,
+                        "상품의 재고가 아예 없습니다. productId: " + command.productId()));
 
         productStock.decrease(command.quantity());
     }
