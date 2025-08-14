@@ -1,6 +1,5 @@
 package com.loopers.domain.like;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -10,7 +9,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -32,31 +30,18 @@ class LikeServiceTest {
     class Like {
 
         @Test
-        @DisplayName("이미 좋아요한 경우, 아무것도 하지 않는다")
-        void like_alreadyLiked_doNothing() {
+        @DisplayName("repository의 saveIfAbsent를 호출하고 결과를 반환한다")
+        void callSaveIfAbsentAndReturnResult() {
             // given
             LikeCommand.Like command = new LikeCommand.Like(1L, new LikeTarget(LikeTarget.TargetType.PRODUCT, 1L));
-            given(likeRepository.existsBy(command.userId(), command.target())).willReturn(true);
+            given(likeRepository.saveIfAbsent(any(com.loopers.domain.like.Like.class))).willReturn(true);
 
             // when
-            likeService.like(command);
+            boolean result = likeService.like(command);
 
             // then
-            verify(likeRepository, never()).save(any(com.loopers.domain.like.Like.class));
-        }
-
-        @Test
-        @DisplayName("좋아요하지 않은 경우, 좋아요를 저장한다")
-        void like_notLiked_saveLike() {
-            // given
-            LikeCommand.Like command = new LikeCommand.Like(1L, new LikeTarget(LikeTarget.TargetType.PRODUCT, 1L));
-            given(likeRepository.existsBy(command.userId(), command.target())).willReturn(false);
-
-            // when
-            likeService.like(command);
-
-            // then
-            verify(likeRepository).save(any(com.loopers.domain.like.Like.class));
+            assertThat(result).isTrue();
+            verify(likeRepository).saveIfAbsent(any(com.loopers.domain.like.Like.class));
         }
     }
 
@@ -65,31 +50,33 @@ class LikeServiceTest {
     class Unlike {
 
         @Test
-        @DisplayName("좋아요한 경우, 좋아요를 삭제한다")
-        void unlike_liked_deleteLike() {
+        @DisplayName("repository의 deleteBy를 호출하고 결과를 반환한다")
+        void callDeleteByAndReturnResult() {
             // given
             LikeCommand.Unlike command = new LikeCommand.Unlike(1L, new LikeTarget(LikeTarget.TargetType.PRODUCT, 1L));
-            given(likeRepository.findBy(command.userId(), command.target())).willReturn(Optional.of(new com.loopers.domain.like.Like(command.userId(), command.target())));
+            given(likeRepository.deleteBy(command.userId(), command.target())).willReturn(1L);
 
             // when
-            likeService.unlike(command);
+            boolean result = likeService.unlike(command);
 
             // then
-            verify(likeRepository).delete(any(com.loopers.domain.like.Like.class));
+            assertThat(result).isTrue();
+            verify(likeRepository).deleteBy(command.userId(), command.target());
         }
 
         @Test
-        @DisplayName("좋아요하지 않은 경우, 아무것도 하지 않는다")
-        void unlike_notLiked_doNothing() {
+        @DisplayName("삭제된 데이터가 없으면 false를 반환한다")
+        void returnFalseIfNoDataDeleted() {
             // given
             LikeCommand.Unlike command = new LikeCommand.Unlike(1L, new LikeTarget(LikeTarget.TargetType.PRODUCT, 1L));
-            given(likeRepository.findBy(command.userId(), command.target())).willReturn(Optional.empty());
+            given(likeRepository.deleteBy(command.userId(), command.target())).willReturn(0L);
 
             // when
-            likeService.unlike(command);
+            boolean result = likeService.unlike(command);
 
             // then
-            verify(likeRepository, never()).delete(any(com.loopers.domain.like.Like.class));
+            assertThat(result).isFalse();
+            verify(likeRepository).deleteBy(command.userId(), command.target());
         }
     }
 

@@ -12,20 +12,15 @@ public class LikeService {
     private final LikeRepository likeRepository;
     
     @Transactional
-    public void like(final LikeCommand.Like command) {
+    public boolean like(final LikeCommand.Like command) {
         final Like like = new Like(command.userId(), command.target());
-
-        if (likeRepository.existsBy(like.getUserId(), like.getLikeTarget())) {
-            return;
-        }
-
-        likeRepository.save(like);
+        return likeRepository.saveIfAbsent(like);
     }
 
     @Transactional
-    public void unlike(final LikeCommand.Unlike command) {
-        likeRepository.findBy(command.userId(), command.target())
-                .ifPresent(likeRepository::delete);
+    public boolean unlike(final LikeCommand.Unlike command) {
+        long removed = likeRepository.deleteBy(command.userId(), command.target());
+        return removed > 0;
     }
 
     public List<LikeInfo> getProductLikes(final LikeCommand.GetLikeProducts command) {
