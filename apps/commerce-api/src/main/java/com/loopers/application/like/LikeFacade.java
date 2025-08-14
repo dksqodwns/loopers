@@ -35,6 +35,7 @@ public class LikeFacade {
 
         if (liked) {
             productCountService.increse(criteria.toCountCommand());
+            productService.increaseLikeCount(criteria.toProductCommand().id());
         }
     }
 
@@ -48,6 +49,7 @@ public class LikeFacade {
         boolean unliked = likeService.unlike(criteria.toLikeCommand());
         if (unliked) {
             productCountService.decrese(criteria.toCountCommand());
+            productService.decreaseLikeCount(criteria.toProductCommand().id());
         }
     }
 

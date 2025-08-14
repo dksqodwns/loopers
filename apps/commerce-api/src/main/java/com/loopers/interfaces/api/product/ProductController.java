@@ -8,9 +8,9 @@ import com.loopers.application.product.ProductResult.SearchProducts;
 import com.loopers.interfaces.api.ApiResponse;
 import com.loopers.interfaces.api.product.ProductDto.V1.ProductResponse;
 import com.loopers.interfaces.api.product.ProductDto.V1.SearchProductResponse;
-import com.loopers.support.enums.SortOrder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,12 +38,10 @@ public class ProductController implements ProductV1ApiSpec {
     @GetMapping
     public ApiResponse<SearchProductResponse> searchProducts(
             @RequestParam(required = false) final Long brandId,
-            @RequestParam(defaultValue = "CREATED_AT") ProductSort sort,
-            @RequestParam(defaultValue = "ASC") SortOrder sortOrder,
-            @PageableDefault(size = 20) final Pageable pageable
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) final Pageable pageable
     ) {
         SearchProducts searchProducts = productFacade.searchProducts(ProductCriteria.SearchProducts.of(
-                brandId, sort.getDescription(), sortOrder, pageable
+                brandId, pageable
         ));
 
         return ApiResponse.success(SearchProductResponse.from(searchProducts));

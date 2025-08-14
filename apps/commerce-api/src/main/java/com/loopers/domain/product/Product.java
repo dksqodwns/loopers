@@ -22,6 +22,8 @@ public class Product extends BaseEntity {
     
     private Long price;
 
+    private Long likeCount = 0L;
+
     public Product(BrandId brandId, String name, Long price) {
         if (name == null) {
             throw new CoreException(ErrorType.BAD_REQUEST, "상품 이름은 비어 있을 수 없습니다.");
@@ -33,5 +35,15 @@ public class Product extends BaseEntity {
         this.brandId = brandId;
         this.name = name;
         this.price = price;
+    }
+
+    public void like() {
+        this.likeCount++;
+    }
+
+    public void unlike() {
+        if (this.likeCount > 0) {
+            this.likeCount--;
+        }
     }
 }

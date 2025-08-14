@@ -24,11 +24,7 @@ public interface ProductV1ApiSpec {
     ApiResponse<ProductDto.V1.SearchProductResponse> searchProducts(
             @Parameter(description = "브랜드 ID (선택 사항)")
             Long brandId,
-            @Parameter(description = "정렬 기준 필드")
-            ProductSort sort,
-            @Parameter(description = "정렬 순서")
-            SortOrder sortOrder,
-            @Parameter
+            @Parameter(description = "정렬 및 페이징 정보 (예: ?page=0&size=20&sort=price,desc)")
             Pageable pageable
     );
 }
