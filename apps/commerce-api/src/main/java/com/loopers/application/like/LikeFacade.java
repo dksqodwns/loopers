@@ -31,8 +31,11 @@ public class LikeFacade {
                     "좋아요를 등록 할 상품을 찾을 수 없습니다. productId: " + criteria.toProductCommand().id());
         }
 
-        likeService.like(criteria.toLikeCommand());
-        productCountService.increse(criteria.toCountCommand());
+        boolean liked = likeService.like(criteria.toLikeCommand());
+
+        if (liked) {
+            productCountService.increse(criteria.toCountCommand());
+        }
     }
 
     @Transactional
@@ -42,8 +45,10 @@ public class LikeFacade {
             throw new CoreException(ErrorType.NOT_FOUND,
                     "좋아요를 취소 할 상품을 찾을 수 없습니다. productId: " + criteria.toProductCommand().id());
         }
-        likeService.unlike(criteria.toLikeCommand());
-        productCountService.decrese(criteria.toCountCommand());
+        boolean unliked = likeService.unlike(criteria.toLikeCommand());
+        if (unliked) {
+            productCountService.decrese(criteria.toCountCommand());
+        }
     }
 
     public GetLikeProducts getLikeProducts(final LikeCriteria.GetLikeProducts criteria) {

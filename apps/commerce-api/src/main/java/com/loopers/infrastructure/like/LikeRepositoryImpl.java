@@ -37,4 +37,20 @@ public class LikeRepositoryImpl implements LikeRepository {
     public List<Like> findAllBy(Long userId, LikeTarget.TargetType targetType) {
         return this.likeJpaRepository.findAllByUserIdAndLikeTarget_TargetType(userId, targetType);
     }
+
+    @Override
+    public boolean saveIfAbsent(Like like) {
+        try {
+            this.likeJpaRepository.saveAndFlush(like);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public long deleteBy(Long userId, LikeTarget likeTarget) {
+        return this.likeJpaRepository.deleteByUserIdAndLikeTarget(userId, likeTarget);
+    }
+
 }
