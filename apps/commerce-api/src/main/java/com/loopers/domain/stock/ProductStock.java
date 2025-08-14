@@ -3,6 +3,7 @@ package com.loopers.domain.stock;
 import com.loopers.domain.BaseEntity;
 import com.loopers.support.error.CoreException;
 import com.loopers.support.error.ErrorType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -16,12 +17,13 @@ import lombok.NoArgsConstructor;
 @Table(
         name = "product_stock",
         uniqueConstraints = @UniqueConstraint(
-                name = "ux_product_stock_product_id",
+                name = "uk_product_stock_product_id",
                 columnNames = "product_id"
         )
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProductStock extends BaseEntity {
+    @Column(name = "product_id", nullable = false)
     private Long productId;
 
     @Embedded
@@ -34,13 +36,9 @@ public class ProductStock extends BaseEntity {
         if (stock == null) {
             throw new CoreException(ErrorType.BAD_REQUEST, "재고 수량은 비어있을 수 없습니다.");
         }
-
         this.productId = productId;
         this.stock = stock;
     }
 
-    public void decrease(final Integer quantity) {
-        this.stock.decrease(quantity);
-    }
-
+    public void decrease(final Integer quantity) { this.stock.decrease(quantity); }
 }
