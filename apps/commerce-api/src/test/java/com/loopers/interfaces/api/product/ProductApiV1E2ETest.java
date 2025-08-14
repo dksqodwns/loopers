@@ -39,16 +39,27 @@ public class ProductApiV1E2ETest {
 
     public static final String END_POINT = "/api/v1/products";
 
+    private final TestRestTemplate testRestTemplate;
+    private final DatabaseCleanUp databaseCleanUp;
+    private final ProductJpaRepository productJpaRepository;
+    private final BrandJpaRepository brandJpaRepository;
+    private final UserJpaRepository userJpaRepository;
+
     @Autowired
-    private TestRestTemplate testRestTemplate;
-    @Autowired
-    private DatabaseCleanUp databaseCleanUp;
-    @Autowired
-    private ProductJpaRepository productJpaRepository;
-    @Autowired
-    private BrandJpaRepository brandJpaRepository;
-    @Autowired
-    private UserJpaRepository userJpaRepository;
+    public ProductApiV1E2ETest(
+            TestRestTemplate testRestTemplate,
+            DatabaseCleanUp databaseCleanUp,
+            ProductJpaRepository productJpaRepository,
+            BrandJpaRepository brandJpaRepository,
+            UserJpaRepository userJpaRepository
+    ) {
+        this.testRestTemplate = testRestTemplate;
+        this.databaseCleanUp = databaseCleanUp;
+        this.productJpaRepository = productJpaRepository;
+        this.brandJpaRepository = brandJpaRepository;
+        this.userJpaRepository = userJpaRepository;
+    }
+
 
     private Brand brand;
 
@@ -123,7 +134,7 @@ public class ProductApiV1E2ETest {
         @Test
         void returnSortedList_whenSortByCreatedAt() {
             // when
-            String url = END_POINT + "?sort=CREATED_AT&sortOrder=DESC";
+            String url = END_POINT + "?sort=createdAt,desc";
             ParameterizedTypeReference<ApiResponse<SearchProductResponse>> responseType = new ParameterizedTypeReference<>() {
             };
             ResponseEntity<ApiResponse<SearchProductResponse>> response = testRestTemplate.exchange(url, HttpMethod.GET, null, responseType);
@@ -137,7 +148,7 @@ public class ProductApiV1E2ETest {
         @Test
         void returnSortedList_whenSortByPrice() {
             // when
-            String url = END_POINT + "?sort=PRICE&sortOrder=ASC";
+            String url = END_POINT + "?sort=price,asc";
             ParameterizedTypeReference<ApiResponse<SearchProductResponse>> responseType = new ParameterizedTypeReference<>() {
             };
             ResponseEntity<ApiResponse<SearchProductResponse>> response = testRestTemplate.exchange(url, HttpMethod.GET, null, responseType);
@@ -161,6 +172,32 @@ public class ProductApiV1E2ETest {
                     () -> assertThat(response.getBody().data().products()).hasSize(2),
                     () -> assertThat(response.getBody().data().totalPages()).isEqualTo(3)
             );
+        }
+
+        @DisplayName("좋아요 많은 순으로 정렬할 경우, 좋아요 내림차순으로 정렬된 목록을 반환한다.")
+        @Test
+        void returnSortedList_whenSortByLikeCount() {
+            // given
+            List<Product> products = productJpaRepository.findAll();
+            Product product1 = products.get(0);
+            product1.like();
+            product1.like();
+            productJpaRepository.save(product1);
+
+            Product product2 = products.get(1);
+            product2.like();
+            productJpaRepository.save(product2);
+
+            // when
+            String url = END_POINT + "?sort=likeCount,desc";
+            ParameterizedTypeReference<ApiResponse<SearchProductResponse>> responseType = new ParameterizedTypeReference<>() {
+            };
+            ResponseEntity<ApiResponse<SearchProductResponse>> response = testRestTemplate.exchange(url, HttpMethod.GET, null, responseType);
+
+            // then
+            List<Long> ids = response.getBody().data().products().stream().map(ProductResponse::id).toList();
+            assertThat(ids.get(0)).isEqualTo(product1.getId());
+            assertThat(ids.get(1)).isEqualTo(product2.getId());
         }
     }
 }
