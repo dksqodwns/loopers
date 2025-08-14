@@ -152,7 +152,7 @@ public class ProductApiV1E2ETest {
             ParameterizedTypeReference<ApiResponse<SearchProductResponse>> responseType = new ParameterizedTypeReference<>() {
             };
             ResponseEntity<ApiResponse<SearchProductResponse>> response = testRestTemplate.exchange(url, HttpMethod.GET, null, responseType);
-            System.out.println("바디: " + response.getBody().data().products().stream().toList());
+
             // then
             List<Long> prices = response.getBody().data().products().stream().map(ProductResponse::price).collect(Collectors.toList());
             assertThat(prices).isSorted();
