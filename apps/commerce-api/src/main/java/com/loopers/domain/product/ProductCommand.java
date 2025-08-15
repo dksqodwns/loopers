@@ -10,7 +10,7 @@ public record ProductCommand() {
     public record GetProducts(List<Long> ids) {
     }
 
-    public record SerachProducts(Long brandId, PageRequest pageRequest) {
+    public record SearchProducts(Long brandId, PageRequest pageRequest) {
     }
 
 }
