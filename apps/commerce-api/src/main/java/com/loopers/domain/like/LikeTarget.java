@@ -18,6 +18,7 @@ public class LikeTarget {
     @Column(name = "target_id", nullable = false)
     private Long id;
 
+    @jakarta.persistence.Enumerated(jakarta.persistence.EnumType.STRING)
     @Column(name = "target_type", nullable = false)
     private TargetType targetType;
 
@@ -28,14 +29,12 @@ public class LikeTarget {
         if (targetType == null) {
             throw new CoreException(ErrorType.BAD_REQUEST, "타겟의 타입은 NULL이 될 수 없습니다.");
         }
-
         this.targetType = targetType;
         this.id = id;
     }
 
     public enum TargetType {
-        BRAND,
-        PRODUCT;
+        BRAND, PRODUCT;
 
         public static TargetType from(final String targetType) {
             try {
@@ -45,6 +44,5 @@ public class LikeTarget {
             }
         }
     }
-
 }
 

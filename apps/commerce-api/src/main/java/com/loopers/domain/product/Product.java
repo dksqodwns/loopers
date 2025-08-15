@@ -19,7 +19,7 @@ public class Product extends BaseEntity {
     private BrandId brandId;
 
     private String name;
-    
+
     private Long price;
 
     private Long likeCount = 0L;
@@ -29,21 +29,17 @@ public class Product extends BaseEntity {
             throw new CoreException(ErrorType.BAD_REQUEST, "상품 이름은 비어 있을 수 없습니다.");
         }
         if (brandId == null) {
-            throw new CoreException(ErrorType.BAD_REQUEST, "상품 가겨은 비어 있을 수 없습니다.");
+            throw new CoreException(ErrorType.BAD_REQUEST, "브랜드 ID는 비어 있을 수 없습니다.");
         }
-
+        if (price == null || price < 0) {
+            throw new CoreException(ErrorType.BAD_REQUEST, "상품 가격은 0 이상이어야 합니다.");
+        }
         this.brandId = brandId;
         this.name = name;
         this.price = price;
     }
 
-    public void like() {
-        this.likeCount++;
-    }
+    public void like() { this.likeCount++; }
 
-    public void unlike() {
-        if (this.likeCount > 0) {
-            this.likeCount--;
-        }
-    }
+    public void unlike() { if (this.likeCount > 0) this.likeCount--; }
 }
